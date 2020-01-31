@@ -41,7 +41,8 @@ var titreentete="";
 var avantentete=1;
 var precclasssup=[];
 var classrefarticle="";
-
+var tableaumunicip="non";
+  
 $(".pc div").not(".y1, .y2").each(function(index){
   var contenu = $(this).text();
   var contenuchoix=contenu;
@@ -54,14 +55,16 @@ $(".pc div").not(".y1, .y2").each(function(index){
   
   var xligne= $(this).position().left;
   var yligne= $(this).position().top;
+  var ecartligne= yligne - precyligne;
   
   var class3=classligne.split(" ")[3];
   var class5=classligne.split(" ")[5];
+ 
   
   var testecontenu="oui"
   if (contenu==titreentete){ testecontenu="non"; contenuchoix=titreentete;};
   if(classrefarticle==class3){
-    testecontenu="non"; contenuchoix="refarticle";
+    testecontenu="non"; contenuchoix="refarticle"; tableaumunicip="non";
   };
   if( (avantentete==1) && (precclasssup.indexOf(class3)!=-1) ){
     testecontenu="non"; contenuchoix="supsub";
@@ -83,10 +86,10 @@ $(".pc div").not(".y1, .y2").each(function(index){
    
   if(testecontenu=="oui"){
     var contenuchoix = typecontenu(contenu, class5);
+  if (contenuchoix=="tableaumunicipal"){ tableaumunicip="oui"; contenuchoix="tableaumunicipal";};
 
     if (contenuchoix=="refarticle"){classrefarticle= class3;};
     if ((contenuchoix=="paragraphe")||(contenuchoix=="oups")){
-      // exceptions sur titres de ministère à faire
       if($(this).is(".pc div:first-child")){
         var lesmotsprec= $(this).parent().parent().prev().children().children(".entete").prev().text().split(" ");
       }else{
@@ -97,6 +100,12 @@ $(".pc div").not(".y1, .y2").each(function(index){
       if("|le|la|de|du|les|des|à|au|aux|et|(chapitre|c.|for|".indexOf("|"+derniermot+"|")!=-1){contenuchoix="suiteparagraphe";};
       if(derniermot[derniermot.length-1]=="-"){contenuchoix="suiteparagraphe";};
       if(derniermot[derniermot.length-1]==","){contenuchoix="suiteparagraphe";};
+      if(contenuchoix!="suiteparagraphe"){
+        if((ecartligne>0)&&(ecartligne<15)){contenuchoix="suiteparagraphe";};
+      };
+      if(tableaumunicip=="oui"){ contenuchoix="tableaumunicipal";};
+      
+
     };       
     if (contenuchoix=="listedegre"){
       // exception sur "° à" comme fin de la lifgne précédente à faire
@@ -151,6 +160,8 @@ $(".pc div").not(".y1, .y2").each(function(index){
       typeligne="refarticle"; $(this).addClass(typeligne+" eval1"); break;
     case "paragraphe":
       typeligne="paragraphe"; $(this).addClass(typeligne+" eval2"); break;
+    case "suitebr":
+      typeligne="suitebr"; $(this).addClass(typeligne+" eval2"); break;
     case "suiteparagraphe":
       typeligne="suiteparagraphe"; $(this).addClass(typeligne+" eval3"); break;
     case "listeordonnee":
@@ -169,6 +180,8 @@ $(".pc div").not(".y1, .y2").each(function(index){
       typeligne="titregras"; $(this).addClass(typeligne+" eval6"); break;
     case "titreitalique":
       typeligne="titreitalique"; $(this).addClass(typeligne+" eval5"); break;
+    case "tableaumunicipal":
+      typeligne="tableaumunicipal"; $(this).addClass(typeligne+" eval5"); break;
     case "oups3":
       typeligne="oups3"; $(this).addClass(typeligne+" fondleger"); break;
     case "oups2":
@@ -244,7 +257,8 @@ function typecontenu(chainecontenu, classff){
   if(contenu=="À jour au "){return "À jour au ";};
   if(contenu=="er"){return "er";};
   if(contenu=="e"){return "e";};
-  
+  if(contenu==");"){return "suiteparagraphe";};
+  if(contenu.substring(0,14)=="Nom de la muni"){return "tableaumunicipal";};
   if(contenu.indexOf("...")!=-1){return "renvoitdm";};
   if(contenu.indexOf("» : ")!=-1){return "definition";};
   if((contenu[0]=="«")){
@@ -299,6 +313,7 @@ function typecontenu(chainecontenu, classff){
     };
   };
   if((mot1=="D.")&& (lesmots[2]=="a.")){return "refarticle";};
+  if((mot1=="D.")&& (lesmots[3]=="G.O.")){return "suitebr";};
   
   var nbmots=lesmots.length;
   if(isNaN(mot1) == true){
@@ -327,7 +342,7 @@ function typecontenu(chainecontenu, classff){
   };
   
   var minuscules="abcdefghijklmnopqrstuvwxyzèéàêû";
-  var majuscules="ABCDEFGHIJKLMNOPQRSTUVWXYZÉÈÀÊ";
+  var majuscules="ABCDEFGHIJKLMNOPQRSTUVWXYZÉÈÀÎ";
   var nombres="1234567890";
 
   if(mot1==="À"){
@@ -351,25 +366,28 @@ function typecontenu(chainecontenu, classff){
   var avdermajusc= majuscules.indexOf(avderniercar[0]);
   var dernier2car=mot1.substring(mot1.length -2);
 
-  if((premajusc!=-1)&&(dermajusc!=-1)&&(graisse=="ff1")&&(mot1.length>2)){ 
-    if(mot2==="du"){return "suiteparagraphe";};
-    return "titre"; 
-  };
 
   if((mot1==="LE")&&(graisse=="ff1")){return "titre";};
   if((mot1==="LA")&&(graisse=="ff1")){return "titre";};
   if((mot1==="ET")&&(graisse=="ff1")){return "titre";};
-  
-  if((premajusc!=-1)&&(avdermajusc!=-1)&&(graisse=="ff1")&&(mot1.length>2)){
-    if(mot2==="de"){return "suiteparagraphe";};
-    return "titre";
+
+  if(premajusc!=-1){
+    if(derminusc!=-1){ return "paragraphe"; };
+    if(mot1.length>2){
+      if(avdermajusc!=-1){
+        if(mot2==="du"){return "suiteparagraphe";};
+        if(mot2==="de"){return "suiteparagraphe";};
+        if(mot1==="L.Q."){return "suitebr";};
+        if(graisse=="ff1"){ return "titre";};
+        if(graisse=="ff2"){ return "titregras";};
+        if(graisse=="ff3"){ return "titreitalique";};
+      };
+    };
   };
-  if((premajusc!=-1)&&(avdermajusc!=-1)&&(graisse=="ff2")&&(mot1.length>2)){return "titregras";};
-  if((premajusc!=-1)&&(avdermajusc!=-1)&&(graisse=="ff3")&&(mot1.length>2)){return "titreitalique";};
   
-  if((premajusc!=-1)&&(derminusc!=-1)){
-    return "paragraphe";
-  };
+  
+  
+  
   if((nbmots>1)&&(premajusc!=-1)&&(derniercar=="»")){return "suiteparagraphe";};
   if((nbmots>1)&&(premajusc!=-1)&&(".,;:".indexOf(derniercar)!=-1)){
     if(dernier2car=="»."){
@@ -388,6 +406,7 @@ function typecontenu(chainecontenu, classff){
   if((nbmots>1)&&(preminusc!=-1)&&(".,;:".indexOf(derniercar)!=-1)){return "suiteparagraphe";}; // ligne avec premier mot fin de phrase
   if((nbmots>1)&&(preminusc!=-1)&&(derminusc!=-1)){return "suiteparagraphe";}; // ligne avec premier mot minuscule
   if((nbmots>1)&&(derniercar=="»")){return "suiteparagraphe";}; // ligne avec premier mot minuscule
+  if((nbmots>1)&&(mot1=="1897/1898")){return "suiteparagraphe";}; // exception lois anciennes
   if((dernier2car==").")||(dernier2car=="),")){return "suiteparagraphe";}; // ligne avec premier mot fin de ref
   
   if(prenombre!=-1){
@@ -418,7 +437,7 @@ function typecontenu(chainecontenu, classff){
   if(premiercar=="("){
     if(contenu.indexOf(", c.")!=-1){return "suiteparagraphe";};
     if(derminusc != -1){return "suiteparagraphe";};
-    return "oups";
+    return "paragraphe";
   }
   if(minuscules.indexOf(contenu[contenu.length-2])!=-1){return "suiteparagraphe";};
 
