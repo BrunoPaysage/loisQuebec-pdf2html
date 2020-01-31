@@ -1,0 +1,67 @@
+ 
+.numeroloiofficiel {font-size:10.5pt; line-height:1.3em;  margin-top:2em;} 
+.titreloiofficiel {font-size:11pt; line-height:1.3em;  font-weight:bold;  } 
+.titreavanttdm {font-size:11pt; line-height:1.3em;   margin-top:1em;} 
+
+.tdm {font-size:11pt; line-height:1.3em; font-weight:bold;  margin-top:2em;} 
+.titretdm, .chapitretdm, .sectiontdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em;} 
+.renvoitdm, .sansrenvoitdm {font-size:10pt; line-height:1em; } 
+.renvoitdm b {float:right;} 
+
+.enteteloi { clear:both; border-bottom:solid 1px #ddd; padding-top:0.5em; color:#ddd;font-size:10.5pt; line-height:1em; } 
+#pf1 .enteteloi {width:100%; text-align:right; border-bottom:solid 0px #ddd; color:#aaa; } 
+#pf1 .enteteloi + .enteteloi {clear:both; text-align:right; padding-top:0em; margin-bottom:1em; border-bottom:solid 1px #ddd; } 
+
+.pieddepageloi {font-size:9pt; line-height:1.3em; color:#ddd;  margin-top:1em;} 
+.pieddepageloi  {float:left;} 
+.pieddepageloi +.pieddepageloi {float:right; padding-top:-0.5em;} 
+
+.grandtitreloi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#dbf; margin-top:2em; }
+.textegrandtitreloi {font-size:11pt; line-height:1.3em;  font-weight: normal; margin-top:0em;  background-color:#dbf; text-align:left;  margin-top:-1em;}
+
+.sectloi, .annexeloi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#adf; margin-top:2em;} 
+.titresectloi, .titreannexeloi {font-size:11pt; line-height:1.3em;  font-weight: normal; background-color:#adf; text-align:left;   margin-top:-1em;} 
+
+.chaploi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#ffb; margin-top:2em;} 
+.titrechapitreloi {font-size:11pt; line-height:1.3em; font-weight: normal;  background-color:#ffb; margin-top:0em; text-align: left;   margin-top:-1em;} 
+
+.soussection {background-color:#cce; margin-top:2em; font-weight: normal; }
+.titresoussection {font-size:11pt; line-height:1.3em; font-weight: normal;   margin-top:1em; background-color:#cce; text-align: left; }
+
+.articleloi {font-size:11pt; line-height:1.3em;   margin-top:1em; } 
+.articleloi .numeroarticle {padding-right:0.5em; } 
+.numeroarticle {font-size:14pt; line-height:0.8em; } 
+.refarticle, .refarticleloi {font-size:10pt; line-height:1.3em; } 
+p+.refarticle,  {margin-top:-0.5em;} 
+
+.paragraphe {font-size:11pt; line-height:1.3em; margin-top:0.5em;} 
+.paragraphe, .listeordonnee, .listedegre {text-align:justify; text-indent: 1em;} 
+
+.listedegre {font-size:11pt; line-height:1.3em;   margin-top:0.5em; } 
+.listeordonnee {font-size:11pt; line-height:1.3em;   margin-top:0.5em; } 
+.listetiret {font-size:11pt; line-height:1.3em;   margin-top:0.5em; } 
+.debutcite {font-size:11pt; line-height:1.3em;   margin-top:0.5em; }  
+
+.ajout, .ajout * {color:#050;}
+.retrait, .retrait * {color:#500; text-decoration: line-through; }
+.ajout p.numpage { display:none;}
+
+.eval0, .neval-2 { background: #fc2a1c; padding:3px;}
+.eval1, .neval-1 { background: #fd9226; padding:3px;}
+.eval2, .neval-0 { background: #fed631; padding:3px;}
+.eval3, .neval0 { background: #d9fd35; padding:3px;}
+.eval4, .neval1 { background: #a3fd32; padding:3px;}
+.eval5, .neval2 { background: #25da29; padding:3px;}
+.eval6, .neval3 { background: #44ac45; padding:3px;}
+.eval7 { background: #880000; padding:3px;}
+.discret { color:#006;}
+.design, .design a {color: #B48B1D;}
+.vegetal, .vegetal a {color: #0D7610;}
+.mieux, .mieux a {color: #64385A;}
+.vivre, .vivre a {color: #4A7737;}
+.ici, .ici a {color: #B48B1D;}
+.sansfond  {background-color:#fff; } 
+.fondleger  {background-color:#cce; } 
+.fondmoyen   {background-color:#98f; } 
+.fondfort   {background-color:#78f; } 
+
