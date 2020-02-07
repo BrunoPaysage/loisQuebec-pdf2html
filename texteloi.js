@@ -296,6 +296,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       $(this).append(" "+$(this).next().text()); $(this).next().remove();
       if($(this).next().text()==" "){$(this).next().remove();};
       break;
+    case "legislature": $(this).addClass("legislature eval1"); break;
       
     case "formule": $(this).addClass("formule eval0"); break;
     case "tableaumunicipal": $(this).addClass("tableaumunicipal eval5"); break;
@@ -344,10 +345,7 @@ function typecontenu(chainecontenu, classff, classgras){
   if(contenu=="LE PARLEMENT DU QUÉBEC DÉCRÈTE CE QUI SUIT :"){return "decrete";}; // afficher les caractères invisibles pour voir la différence
   if(contenu=="Projet de loi n"){return "projetloinum";};
   if(contenu.substring(0,14)=="Nom de la muni"){return "tableaumunicipal";};
-  if(contenu.indexOf("...")!=-1){
-    return "renvoitdm";
-    
-  };
+  if(contenu.indexOf("...")!=-1){ return "renvoitdm"; };
   if(contenu.indexOf("» : ")!=-1){return "definition";};
   if((contenu[0]=="«")){
     if(contenu.indexOf("»")!=-1){
@@ -464,6 +462,8 @@ function typecontenu(chainecontenu, classff, classgras){
 
   if(premajusc!=-1){
     if(derminusc!=-1){ return "paragraphe"; };
+    var deuxder=contenu.substring(contenu.length-2);
+    if(deuxder=="»."){ return "suiteparagraphe"; };
     if(mot1.length>2){
       if(avdermajusc!=-1){
         if(mot2==="du"){return "suiteparagraphe";};
@@ -536,7 +536,7 @@ function typecontenu(chainecontenu, classff, classgras){
   if(mot1=="-"){
     return "listetiret";
   }else{
-    //alert(mot1);
+    if(contenu.indexOf("LÉGISLATURE")!=-1){ return "legislature"; };
     return "suiteparagraphe";
   };
 };
