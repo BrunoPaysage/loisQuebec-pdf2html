@@ -16,8 +16,8 @@
 .pieddepageloi  {float:left;} 
 .pieddepageloi +.pieddepageloi {float:right; padding-top:-0.5em;} 
 
-.grandtitreloi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#dbf; margin-top:2em; }
-.textegrandtitreloi {font-size:11pt; line-height:1.3em;  font-weight: normal; margin-top:0em;  background-color:#dbf; text-align:left;  margin-top:-1em;}
+.titreloinum, .grandtitreloi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#dbf; margin-top:2em; }
+.titreloitexte, .textegrandtitreloi {font-size:11pt; line-height:1.3em;  font-weight: normal; margin-top:0em;  background-color:#dbf; text-align:left;  margin-top:-1em;}
 
 .sectloi, .annexeloi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#adf; margin-top:2em;} 
 .titresectloi, .titreannexeloi {font-size:11pt; line-height:1.3em;  font-weight: normal; background-color:#adf; text-align:left;   margin-top:-1em;} 
