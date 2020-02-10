@@ -78,6 +78,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
   var contenuchoix=contenu;
   if($(this).is(":first-child")){avantentete=1;};
   idpage=$(this).parent().parent().attr("id");
+  
   if(($(this).is(":first-child"))&&(contenu==premieritemloi)){ typepage="texteloi"; avanttdm=2;};
   if(($(this).is(":first-child"))&&(typepage=="pagetdm")&&(contenu.substring(0,2)=="1.")){typepage="texteloi"; avanttdm=2;};
   if($(this).is(":first-child")){ $("#"+idpage).addClass(typepage);};
@@ -97,10 +98,15 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
   // choix d'action sans connaissance du contenu de la ligne
   if (contenu==titreentete){ testecontenu="non"; contenuchoix=titreentete;};
   if(classrefarticle==class3){
-    testecontenu="non"; contenuchoix="refarticle"; tableaumunicip="non";
+    testecontenu="non"; tableaumunicip="non";
+    contenuchoix="refarticle"; 
+    if($(this).prev().hasClass("refarticle")){ contenuchoix="suiteparagraphe";};
   };
   if( (avantentete==1) && (precclasssup.indexOf(class3)!=-1) ){
-    testecontenu="non"; contenuchoix="supsub";
+    if(contenu =="À jour au "){precclasssup.splice(precclasssup.indexOf(class3),1,"");}else{testecontenu="non"; contenuchoix="supsub";
+      
+    };
+    
   };
   if( ($(this).prev().hasClass("editeur")) && ($(this).hasClass("ff1")) ){
     testecontenu="non"; contenuchoix="pageloipdf";
@@ -109,13 +115,19 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
   
   // choix d'action en fonction du contenu de la ligne
   if(testecontenu=="oui"){
-    var contenuchoix = typecontenu(contenu, class5, classgras);
+    var contenuchoix = typecontenu(contenu, class5, classgras, classitalique);
     
     // ajustement du choix d'action ou critères pour choix connaissance
-    if (contenuchoix=="refarticle"){classrefarticle=class3;};
+    if (contenuchoix=="refarticle"){ classrefarticle=class3; };
         
     if (contenuchoix=="notesexplic"){ 
       classgras=class5; contenuchoix="titregras"; classitalique=$(this).next().attr("class").split(" ")[5]
+    };
+    
+    if (contenuchoix=="listeordonnee"){ 
+      if(contenu.substring(0,2)==="a)"){
+        classitalique=$(this).attr("class").split(" ")[5];
+      };
     };
     
     if (contenuchoix=="tableaumunicipal"){ tableaumunicip="oui"; contenuchoix="tableaumunicipal";};
@@ -139,6 +151,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           if($(this).prev().hasClass("numarticle")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("renvoitdm")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("titre")){ contenuchoix="paragraphe"; };
+          if($(this).prev().hasClass("titretdm")){ contenuchoix="paragraphe"; };
         };
       };
       if(tableaumunicip=="oui"){ contenuchoix="tableaumunicipal";};
@@ -156,13 +169,22 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
          
     if (contenuchoix=="titre"){ 
       if(avanttdm==1){contenuchoix="titreavanttdm";};
-      if(avanttdm==0){contenuchoix="titretdm";};
+      if(avanttdm==0){
+        contenuchoix="titretdm";
+      };
       if(avanttdm==2){
-        contenuchoix="titre";
         if($(this).prev().hasClass("titreloinum")){ contenuchoix="titreloitexte"; };
         if($(this).prev().hasClass("chaploi")){ contenuchoix="titrechapitreloi"; };
         if($(this).prev().hasClass("sectloi")){ contenuchoix="titresectloi"; };
         if($(this).prev().hasClass("annexeloi")){ contenuchoix="titreannexeloi"; };
+        if($(this).prev().hasClass("titre")){ contenuchoix="suiteparagraphe"; };
+        if($(this).prev().hasClass("titreloitexte")){ contenuchoix="suitetitre"; };
+        if($(this).prev().hasClass("titrechapitreloi")){ contenuchoix="suitetitre"; };
+        if($(this).prev().hasClass("titresectloi")){ contenuchoix="suitetitre"; };
+        if(contenu.indexOf("DISPOSITIONS MODIFICATIVES")==0){ contenuchoix="titrespecial"; };
+        if(contenu.indexOf("AUTRES MODIFICATIONS")==0){ contenuchoix="titrespecial"; };
+        if(contenu.indexOf("DISPOSITIONS TRANSITOIRES")==0){ contenuchoix="titrespecial"; };
+        if(contenu.indexOf("DISPOSITION FINALE")==0){ contenuchoix="titrespecial"; };
       };
     };   
     if (contenuchoix=="titregras"){ 
@@ -174,7 +196,10 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         };
 
       }; 
-    };   
+    };  
+    if(contenuchoix=="titretdm"){
+       if($(this).prev().hasClass("titretdm")){ contenuchoix="suiteparagraphe"; };
+    }; 
        
     if (contenuchoix=="definition"){
       if($(this).is(".pc div:first-child")){
@@ -193,17 +218,52 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       if (precclassligne.indexOf("soussection")!=-1){contenuchoix="numarticle";};
     };
   };
+
+  
   
   // Action en fonction du choix d'action
   switch (contenuchoix) {
-    case "article": $(this).addClass("article eval4"); break;
+    case "article": 
+      $(this).addClass("article eval4"); 
+      $(this).contents().wrap("<b class=\"numarticle\"></b>");
+      if($(this).children("b:first-child").text()==="1"){$(this).children("b:first-child").append($(this).children("b").eq(1).text()); $(this).append($(this).children("b").eq(1).remove());};
+      $(this).children(".numarticle + .numarticle").contents().unwrap();
+      $(this).children("span.ff1").contents().unwrap();
+      $(this).children("span").contents().wrapAll("<i></i>");
+      $(this).children("span").contents().unwrap();
+      var remplacepoints = new RegExp('\\.', 'g');
+      var contenu5 = "art"+$(this).children("b.numarticle").text().replace(remplacepoints, '_');
+      contenu5 = contenu5.substring(0,contenu5.length -1);
+      if(contenu5.substring(contenu5.length -1)=="_"){contenu5 = contenu5.substring(0,contenu5.length -1);};
+      $(this).children("b.numarticle").attr("id",contenu5);
+      var lesclass=$(this).attr("class").replace(class5,"fff");
+      $(this).attr("class",lesclass);
+      break;
     case "article1": $(this).addClass("article1 eval0"); break;
     case "article2": $(this).addClass("article2 eval7"); break;
     case "numarticle": $(this).addClass("numarticle eval0"); break;
     case "refarticle": $(this).addClass("refarticle eval1"); break;
-    case "paragraphe": $(this).addClass("paragraphe eval2"); break;
+    case "paragraphe": 
+      $(this).addClass("paragraphe eval2"); 
+      if(class5==classgras){
+        $(this).contents().wrap("<b class\"buzz2\"></b>");
+      };
+      if(class5==classitalique){
+        $(this).contents().wrapAll("<i></i>");
+      };
+      break;
     case "suiteparagraphe":
-      $(this).addClass("suiteparagraphe eval3"); break;
+      $(this).addClass("suiteparagraphe eval3"); 
+      if(class5==classgras){
+        $(this).contents().wrap("<b class\"buzz\"></b>");
+      };
+      if(class5==classitalique){
+        if($(this).children().length==1){$(this).contents().wrap("<i></i>");};
+        if($(this).children().length==0){$(this).contents().wrapAll("<i></i>");};
+        $(this).children("i").has("> span").contents("span").unwrap().contents().unwrap();
+      };
+      $(this).prev().append(" "+$(this).html()); $(this).remove();
+      break;
     case "suitebr": $(this).addClass("suitebr eval2"); break;
     
     case "editeur":
@@ -213,7 +273,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       $(this).addClass("ajour eval3"); 
       if(idpage=="pf2"){
         titreentete=$(this).prev().text(); 
-        $(this).prev().removeClass("titretdm eval7").addClass("entete eval2"); 
+        $(this).prev().removeClass("titretdm eval6 titre eval7").addClass("entete eval2"); 
       };  
       $(this).append(" "+$(this).next().text()); $(this).next().remove(); $(this).append("<sup>"+$(this).next().text()+"</sup> "+$(this).next().next().next().text()); $(this).next().remove();$(this).next().remove();$(this).next().remove();   
       break;
@@ -233,6 +293,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "listetiret": $(this).addClass("listetiret eval6"); break;
     case "definition": $(this).addClass("definition eval6"); break;
     case "citation": $(this).addClass("citation eval6"); break;
+    case "citationarticle": $(this).addClass("citationarticle eval5"); break;
     case "considerant": $(this).addClass("considerant eval6"); break;
 
     case "numeroloiofficiel": $(this).addClass("numeroloiofficiel eval0"); break;
@@ -257,21 +318,31 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "titretdm": $(this).addClass("titretdm eval6"); break;
     case "chapitretdm": $(this).addClass("chapitretdm eval5"); break;
     case "sectiontdm": $(this).addClass("sectiontdm eval6"); break;
+    case "annexetdm": $(this).addClass("annexetdm eval7"); break;
     
     case "decrete": $(this).addClass("decrete fondleger"); break;
     case "titre": $(this).addClass("titre eval7"); break;
     case "titregras": $(this).addClass("titregras eval6"); break;
     case "titreitalique": $(this).addClass("titreitalique eval5"); break;
+    case "titrespecial": $(this).addClass("titrespecial fondleger"); break;
+
+    case "suitetitre": 
+      $(this).prev().append(" "+$(this).text()); 
+      $(this).remove();
+      break;
 
       
     case "supsub":
+      $(this).addClass("sup eval0");
       if ($(this).prev().hasClass("article")){ yligne= yligne-25; };    
       if(yligne > precyligne){
-        $(this).addClass("sub eval5");
+          $(this).prev().append("<sub>"+$(this).text()+"</sub>");
+//        $(this).addClass("sub eval5");
       }else{
-        $(this).addClass("sup eval7");
+          $(this).prev().append("<sup>"+$(this).text()+"</sup>");
+//        $(this).addClass("sup eval7");
       };
-      //$(this).remove();
+      $(this).remove();
       break;
     case "e":   
     case "er":   
@@ -279,11 +350,13 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         if ($(this).prev().hasClass("article")){ yligne= yligne-25; };
         if ($(this).prev().hasClass("suiteparagraphe")){ yligne= yligne-10; };
         if(yligne > precyligne){
-          $(this).addClass("sub eval0");
+          $(this).prev().append("<sub>"+$(this).text()+"</sub>");
+//          $(this).addClass("sub eval0");
         }else{
-          $(this).addClass("sup eval1");
+          $(this).prev().append("<sup>"+$(this).text()+"</sup>");
+//          $(this).addClass("sup eval1");
         };
-        //$(this).remove();
+        $(this).remove();
       break;
       
     case "pageloipdf": $(this).addClass("pageloipdf eval3"); break;
@@ -327,7 +400,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
 
 }; // fin function nettoyageloi
 
-function typecontenu(chainecontenu, classff, classgras){
+function typecontenu(chainecontenu, classff, classgras, classitalique){
   var typecontenu="";
   var contenu = chainecontenu;
   if(contenu=="Non en vigueur"){return "nonenvigueur";};
@@ -346,19 +419,34 @@ function typecontenu(chainecontenu, classff, classgras){
   if(contenu=="Projet de loi n"){return "projetloinum";};
   if(contenu.substring(0,14)=="Nom de la muni"){return "tableaumunicipal";};
   if(contenu.indexOf("...")!=-1){ return "renvoitdm"; };
+  
+  var graisse = classff;
+  var lesmots = contenu.split(" ");
+  var mot1=lesmots[0]; var mot1b=mot1.substring(mot1.length - 1);
+  var mot2=lesmots[1];
+  
   if(contenu.indexOf("» : ")!=-1){return "definition";};
   if((contenu[0]=="«")){
     if(contenu.indexOf("»")!=-1){
       return "definition";
     }else{
-      return "citation";
+      if(isNaN(mot2) == true){
+        var remplacepoints2 = new RegExp('[\\.R]', 'g');
+        var mot2c = mot2;
+        mot2c = mot2c.replace(remplacepoints2, '');
+        if(isNaN(mot2c) != true){
+          if(mot2.substring(mot2.length -1)==="."){ 
+            return "citationarticle";
+          };
+        };
+        return "citation";
+      }else{
+        if(mot2.substring(mot2.length-1)=="."){return "citationarticle";};
+      };
+         
     };
   };
   if(contenu.indexOf("»; ")!=-1){return "suiteparagraphe";};
-  var graisse = classff;
-  var lesmots = contenu.split(" ");
-  var mot1=lesmots[0]; var mot1b=mot1.substring(mot1.length - 1);
-  var mot2=lesmots[1];
   if(mot1=="TITRE"){return "titreloinum";};
   if(mot1=="CHAPITRE"){return "chaploi";};
   if(mot1=="SECTION"){return "sectloi";};
@@ -471,7 +559,7 @@ function typecontenu(chainecontenu, classff, classgras){
         if(mot1==="L.Q."){return "suitebr";};
         if(graisse=="ff1"){ return "titre";};
         if(graisse==classgras){ return "titregras";};
-        if(graisse=="ff3"){ return "titreitalique";};
+        if(graisse==classitalique){ return "titreitalique";};
       };
     };
   };
@@ -483,9 +571,13 @@ function typecontenu(chainecontenu, classff, classgras){
   if((nbmots>1)&&(premajusc!=-1)&&(".,;:".indexOf(derniercar)!=-1)){
     if(dernier2car=="»."){
       return "suiteparagraphe";
-    }else{
+    };
+    if(dernier2car=="),"){
+      return "suiteparagraphe";
+    };
+    //else{
       return "paragraphe";
-    };  
+    //};  
   }; // ligne avec premier mot fin de phrase
   
   if((nbmots==1)&&(preminusc!=-1)&&(".;:".indexOf(derniercar)!=-1)){return "suiteparagraphe";}; //mot seul fin de phrase
@@ -539,4 +631,8 @@ function typecontenu(chainecontenu, classff, classgras){
     if(contenu.indexOf("LÉGISLATURE")!=-1){ return "legislature"; };
     return "suiteparagraphe";
   };
+};
+
+function despan(textehtml){
+  return textehtml;
 };

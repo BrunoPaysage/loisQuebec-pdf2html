@@ -4,7 +4,7 @@
 .titreavanttdm {font-size:11pt; line-height:1.3em;   margin-top:1em;} 
 
 .tdm {font-size:11pt; line-height:1.3em; font-weight:bold;  margin-top:2em;} 
-.titretdm, .chapitretdm, .sectiontdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em;} 
+.titretdm, .chapitretdm, .sectiontdm, .annexetdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em;} 
 .renvoitdm, .sansrenvoitdm {font-size:10pt; line-height:1em; } 
 .renvoitdm b {float:right;} 
 
