@@ -22,6 +22,7 @@ function effaceeval(){
   $(".eval4").removeClass("eval4");
   $(".eval5").removeClass("eval5");
   $(".eval6").removeClass("eval6");
+  $(".eval7").removeClass("eval7");
 };
 
 function nettoyageloi(){
@@ -53,8 +54,6 @@ if(premiereligne=="1"){
 if(premiereligne.indexOf("LÉGISLATURE")!=-1){
   typetexte="pl36";
 };
-
-
 
 
 var idpage="";
@@ -117,6 +116,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
   if(testecontenu=="oui"){
     var contenuchoix = typecontenu(contenu, class5, classgras, classitalique);
     
+
     // ajustement du choix d'action ou critères pour choix connaissance
     if (contenuchoix=="refarticle"){ classrefarticle=class3; };
         
@@ -132,7 +132,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     
     if (contenuchoix=="tableaumunicipal"){ tableaumunicip="oui"; contenuchoix="tableaumunicipal";};
 
-
+    // modification du choix d'action en fonction du contexte
     if ((contenuchoix=="paragraphe")||(contenuchoix=="oups")){
       if($(this).is(".pc div:first-child")){
         var lesmotsprec= $(this).parent().parent().prev().children().children(".entete").prev().text().split(" ");
@@ -146,7 +146,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       if(derniermot[derniermot.length-1]=="-"){contenuchoix="suiteparagraphe";};
       if(derniermot[derniermot.length-1]==","){contenuchoix="suiteparagraphe";};
       if(contenuchoix!="suiteparagraphe"){
-        if((ecartligne>0)&&(ecartligne<15)){
+        if((ecartligne>0)&&(ecartligne<14)){
           contenuchoix="suiteparagraphe";
           if($(this).prev().hasClass("numarticle")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("renvoitdm")){ contenuchoix="paragraphe"; };
@@ -198,8 +198,23 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       }; 
     };  
     if(contenuchoix=="titretdm"){
-       if($(this).prev().hasClass("titretdm")){ contenuchoix="suiteparagraphe"; };
+       if($(this).prev().hasClass("titretdm")){ 
+         if($(this).prev().hasClass("renvoitdm")){
+           contenuchoix="titretdm";
+         }else{
+          contenuchoix="suiteparagraphe"; 
+         };
+       };
     }; 
+    
+    if(contenuchoix=="renvoitdm"){
+       if($(this).prev().hasClass("titretdm")){ if(ecartligne<12){contenuchoix="suiterenvoitdm";} };
+       if($(this).prev().hasClass("paragraphe")){ if(ecartligne<12){contenuchoix="suiterenvoitdm";} };
+       if($(this).prev().hasClass("titreitalique")){ if(ecartligne<12){contenuchoix="suiterenvoitdm";} };
+    }; 
+    if (contenuchoix=="soussection"){
+      if ($(this).prev().hasClass("renvoitdm")){contenuchoix="suitetdmsoussection";};
+    };
        
     if (contenuchoix=="definition"){
       if($(this).is(".pc div:first-child")){
@@ -213,36 +228,47 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
          
     if (contenuchoix=="numeroseul"){
       if ((ecartligne>0)&&(ecartligne<15)){ contenuchoix="suiteparagraphe";};
-      if (ecartligne >15){contenuchoix="paragraphe";};
-      if (precclassligne.indexOf("renvoitdm")!=-1){contenuchoix="numarticle";};
-      if (precclassligne.indexOf("soussection")!=-1){contenuchoix="numarticle";};
+      if (ecartligne >14){contenuchoix="paragraphe";};
+      try {
+        if (precclassligne.indexOf("renvoitdm")!=-1){contenuchoix="numarticletdm";};
+        if (precclassligne.indexOf("soussection")!=-1){contenuchoix="numarticletdm";};
+      }catch(err){};
     };
+
   };
 
   
   
   // Action en fonction du choix d'action
   switch (contenuchoix) {
+    case "article1R": 
+      $(this).children("span:first-child").remove(); 
+      var contenu5=""+$(this).html().substring(0,2)+$(this).html().substring(2);
+      $(this).html(contenu5);
+      $(this).contents().wrap("<b class=\"numarticle\"></b>");
+      $(this).children(".numarticle + .numarticle").contents().unwrap();
+      $(this).children("span.ff1").contents().unwrap();
     case "article": 
       $(this).addClass("article eval4"); 
-      $(this).contents().wrap("<b class=\"numarticle\"></b>");
-      if($(this).children("b:first-child").text()==="1"){$(this).children("b:first-child").append($(this).children("b").eq(1).text()); $(this).append($(this).children("b").eq(1).remove());};
+      if($(this).children("b").length==0){ $(this).contents().wrap("<b class=\"numarticle\"></b>"); };
+      if($(this).children("b:first-child").text()!=contenu.split(" ")[0]){ $(this).children("b:first-child").append($(this).children("b").eq(1).text()); $(this).children("b").eq(1).remove(); };
+      
+      if($(this).children("b:first-child").text()!=contenu.split(" ")[0]){ $(this).children("b:first-child").append($(this).children("b").eq(1).text()); $(this).children("b").eq(1).remove(); };
+      
       $(this).children(".numarticle + .numarticle").contents().unwrap();
       $(this).children("span.ff1").contents().unwrap();
       $(this).children("span").contents().wrapAll("<i></i>");
       $(this).children("span").contents().unwrap();
-      var remplacepoints = new RegExp('\\.', 'g');
-      var contenu5 = "art"+$(this).children("b.numarticle").text().replace(remplacepoints, '_');
-      contenu5 = contenu5.substring(0,contenu5.length -1);
-      if(contenu5.substring(contenu5.length -1)=="_"){contenu5 = contenu5.substring(0,contenu5.length -1);};
+      
+      var contenulien="art"+faitlelienhref($(this).children("b.numarticle").text());
+      var contenu5=contenulien;
       $(this).children("b.numarticle").attr("id",contenu5);
       var lesclass=$(this).attr("class").replace(class5,"fff");
       $(this).attr("class",lesclass);
       break;
-    case "article1": $(this).addClass("article1 eval0"); break;
-    case "article2": $(this).addClass("article2 eval7"); break;
-    case "numarticle": $(this).addClass("numarticle eval0"); break;
+
     case "refarticle": $(this).addClass("refarticle eval1"); break;
+
     case "paragraphe": 
       $(this).addClass("paragraphe eval2"); 
       if(class5==classgras){
@@ -251,26 +277,69 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       if(class5==classitalique){
         $(this).contents().wrapAll("<i></i>");
       };
+      if($(this).children().hasClass(classitalique)){
+        $(this).children().contents().wrap("<i></i>");
+        $(this).children().contents().unwrap();        
+      };
+      if($(this).children().length==1){
+        if($(this).children("span").text()=="Gazette officielle du Québec"){
+          classitalique=$(this).children("span").attr("class");
+          $(this).children("span").contents().wrapAll("<i></i>");
+          $(this).children("span").contents().unwrap();
+         };
+      };
       break;
+
     case "suiteparagraphe":
       $(this).addClass("suiteparagraphe eval3"); 
-      if(class5==classgras){
-        $(this).contents().wrap("<b class\"buzz\"></b>");
-      };
+      if(class5==classgras){ $(this).contents().wrap("<b class\"tdmnumarticle\"></b>"); };
       if(class5==classitalique){
         if($(this).children().length==1){$(this).contents().wrap("<i></i>");};
         if($(this).children().length==0){$(this).contents().wrapAll("<i></i>");};
         $(this).children("i").has("> span").contents("span").unwrap().contents().unwrap();
       };
-      $(this).prev().append(" "+$(this).html()); $(this).remove();
+      if($(this).children().hasClass(classitalique)){
+        $(this).children().contents().wrap("<i></i>");
+        $(this).children().contents().unwrap();        
+      };
+      if($(this).prev().hasClass("pageloipdf")){
+        if(typetexte=="pl44"){
+          $(this).parent().parent().prev().children(".pc").children("div:last-child").append(" "+$(this).html());
+        };
+      }else{
+        $(this).prev().append(" "+$(this).html());
+      };
+       
+      
+      if(class5==classgras){ 
+        // fabrique le href
+        var contenulien="art"+faitlelienhref($(this).text());
+        if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+        if($(this).prev().text().substring(0,1)=="§"){
+          classrenvoi="renvoitdm eval2";
+        }else{
+          classrenvoi="renvoitdm eval3";
+        };
+        $(this).prev().removeClass("paragraphe eval2 renvoitdm eval3").addClass(classrenvoi);
+      };
+      $(this).remove();
       break;
+
     case "suitebr": $(this).addClass("suitebr eval2"); break;
     
     case "editeur":
-      $(this).addClass("editeur eval2"); $(this).parent().parent().removeClass("pagetdm").addClass(typepage); avantentete=0; break;
+      $(this).addClass("editeur eval2"); 
+      if(idpage=="pf1" && $("#pf1 .editeur")){
+        if($(this).prev().hasClass("ajour")){$(this).addClass("pieddepageloi");}else{$(this).addClass("entete");};
+      };
+      $(this).parent().parent().removeClass("pagetdm").addClass(typepage); 
+      avantentete=0; 
+      break;
+
     case titreentete: $(this).addClass("entete eval2"); avantentete=0; break;
+
     case "ajourau":
-      $(this).addClass("ajour eval3"); 
+      $(this).addClass("ajour pieddepageloi");
       if(idpage=="pf2"){
         titreentete=$(this).prev().text(); 
         $(this).prev().removeClass("titretdm eval6 titre eval7").addClass("entete eval2"); 
@@ -284,14 +353,109 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       if(premieritemloi.indexOf("....")>3){premieritemloi=premieritemloi.substring(0,premieritemloi.indexOf("...."));};
       avanttdm=0;
       break;
-    case "renvoitdm": $(this).addClass("renvoitdm eval3"); avantentete=0; break;
+
+    case "renvoitdm": 
+      avantentete=0; 
+      $(this).addClass("renvoitdm eval3"); 
+      if(contenu.substring(contenu.length-1)=="."){
+        // renvoi en attente de numéro
+      };
+      if(contenu.substring(contenu.length-1)!="."){
+        // renvoi complet faire href
+        if($(this).children(".ff1").length==1){
+          if($(this).children(".ff1").text()[0]=="§"){
+            $(this).removeClass("renvoitdm eval3").addClass("soussectiontdm renvoitdm eval2");      
+            var classrenvoi="soussectiontdm";
+          }else{
+            $(this).removeClass("renvoitdm eval3").addClass("soussoussectiontdm renvoitdm eval3");      
+            var classrenvoi="soussoussectiontdm";
+          };
+          var contenu2=$(this).children(".ff1").text();
+          contenu2=contenu2.substring(0,contenu2.indexOf("—")+2);
+          var contenu5=contenu.substring(0,contenu.indexOf("."))+" ";
+          var numarticle=contenu.substring(contenu.indexOf("—")+2);
+          var contenulien="art"+faitlelienhref(numarticle);
+          $(this).html("<span class=\""+classrenvoi+"\">"+contenu2+"</span> <i class=\"titretdm\">"+contenu5+"</i> <b class=\"numarticle\">"+numarticle+"</b>");
+          if(contenulien!="art"){ $(this).contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+          
+        };
+        if($(this).children(".ff2").length==1){
+          $(this).removeClass("renvoitdm eval3").addClass("titretdm renvoitdm eval3");
+          var contenu5=contenu.substring(0,contenu.indexOf("."))+" ";
+          var numarticle=$(this).children(".ff2").text();
+          var contenulien="art"+faitlelienhref(numarticle);
+          $(this).html("<span class=\"titretdm\">"+contenu5+"</span> <b class=\"numarticle\">"+numarticle+"</b>");
+          if(contenulien!="art"){ $(this).contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+        };
+      };
+      break;
+
+    case "suiterenvoitdm": 
+      avantentete=0; 
+      if(contenu[contenu.length]=="."){$(this).prev().addClass("eval3");};
+      if(contenu[contenu.length]!="."){$(this).prev().removeClass(" eval6").addClass("renvoitdm eval3");};
+      $(this).prev().append(" "+$(this).html());
+      if($(this).children(".ff2").length==1){
+        contenuprec=$(this).prev().text();
+          var contenu5=contenuprec.substring(0,contenuprec.indexOf("."));
+          var numarticle=$(this).children(".ff2").text();
+          var contenulien="art"+faitlelienhref(numarticle);
+          $(this).prev().html("<span class=\"titretdm\">"+contenu5+"</span> <b class=\"numarticle\">"+numarticle+"</b>");
+          if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+      };
+      $(this).remove();
+      break;
+
+    case "suitetdmsoussection": 
+      //$(this).addClass("tdmsoussection eval0");
+      var contenutexte=$(this).prev().text();
+      contenutexte=contenutexte.substring(0,contenutexte.indexOf("..."));
+      if($(this).text().substring(0,1)=="§"){
+        classrenvoi="soussectiontdm";
+        $(this).prev().removeClass("titreitalique eval5").addClass("soussectiontdm eval2");
+      }else{ 
+        classrenvoi="soussoussectiontdm"; 
+        $(this).prev().removeClass("titreitalique eval5").addClass("soussoussectiontdm eval3");
+      };
+      
+      $(this).prev().html("<span class=\""+classrenvoi+"\">"+$(this).text()+"</span> <i class=\"titretdm\">"+contenutexte+"</i>"); $(this).remove();
+      break;
+
+    case "numarticletdm": 
+      $(this).addClass("numarticletdm eval0"); 
+      var contenu5=contenuprec.substring(0,contenuprec.indexOf("."));
+      var contenulien="art"+faitlelienhref($(this).text());
+      $(this).prev().html("<span class=\"titretdm\">"+contenu5+"</span> <b class=\"numarticle\">"+contenu+"</b>");
+      if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+//      $(this).prev().removeClass(" renvoitdm eval3").addClass("titretdm renvoitdm");
+      $(this).remove();
+      break;
     case "sansrenvoitdm": $(this).addClass("sansrenvoitdm eval4"); avantentete=0; break;
     
 
-    case "listeordonnee": $(this).addClass("listeordonnee eval4"); break;
-    case "listedegre": $(this).addClass("listedegre eval5"); break;
+    case "listeordonnee": 
+      $(this).addClass("listeordonnee eval4"); 
+      var contenu2=contenu.substring(0,contenu.indexOf(")")+2);
+      var contenu5=$(this).text().substring(contenu.indexOf(")")+2);
+      $(this).html("<i>"+contenu2+"</i> "+contenu5);
+      var lesclass=$(this).attr("class").replace(class5,"fff");
+      $(this).attr("class",lesclass);
+      break;
+    case "listedegre": 
+      $(this).addClass("listedegre eval5"); 
+      if(!$(this).children().length==0){
+        $(this).children().contents().wrap("<i></i>");
+        $(this).children().contents().unwrap();
+      };
+      break;
     case "listetiret": $(this).addClass("listetiret eval6"); break;
-    case "definition": $(this).addClass("definition eval6"); break;
+    case "definition": 
+      $(this).addClass("definition eval6"); 
+      if(!$(this).children().length==0){
+        $(this).children().contents().wrap("<b></b>");
+        $(this).children().contents().unwrap();
+      };
+      break;
     case "citation": $(this).addClass("citation eval6"); break;
     case "citationarticle": $(this).addClass("citationarticle eval5"); break;
     case "considerant": $(this).addClass("considerant eval6"); break;
@@ -302,13 +466,28 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "titreloinum": $(this).addClass("titreloinum"); break;
     case "titreloitexte": $(this).addClass("titreloitexte eval7"); break;
     
-    case "chaploi": $(this).addClass("chaploi eval5"); break;
+    case "chaploi": 
+      if(avanttdm==1){$(this).addClass("chaploi eval5");};
+      if(avanttdm==0){$(this).addClass("chapitretdm sansrenvoitdm eval5");};
+      if(avanttdm==2){$(this).addClass("chaploi eval5");};
+       
+      if($(this).children().length==1){$(this).children().contents().wrapAll("<i></i>")}; 
+      $(this).children().contents().unwrap();
+      break;
     case "titrechapitreloi": $(this).addClass("titrechapitreloi fondleger"); break;
     
-    case "sectloi": $(this).addClass("sectloi eval6"); break;
+    case "sectloi": 
+      $(this).addClass("sectloi eval6"); 
+      if($(this).children().length==1){$(this).children().contents().wrapAll("<i></i>")}; 
+      $(this).children().contents().unwrap();
+      break;
     case "titresectloi": $(this).addClass("titresectloi fondleger"); break;
     
-    case "soussection": $(this).addClass("soussection eval7"); break;
+    case "soussection": 
+      $(this).addClass("soussection eval7"); 
+      if($(this).children().length==1){$(this).children().contents().wrapAll("<i></i>")}; 
+      $(this).children().contents().unwrap();
+      break;
     case "titresoussection": $(this).addClass("titresoussection eval7"); break;
     
     case "annexeloi": $(this).addClass("annexeloi eval7"); break;
@@ -359,9 +538,16 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         $(this).remove();
       break;
       
-    case "pageloipdf": $(this).addClass("pageloipdf eval3"); break;
-    case "Ce document a valeur officielle.":
-      $(this).addClass("officiel eval4"); $(this).text("Ce document n'a pas valeur officielle."); break;
+    case "pageloipdf": 
+      $(this).addClass("pageloipdf pieddepageloi"); 
+      $(this).children().contents().wrap("<b></b>");
+      $(this).children().contents().unwrap();
+      break;
+    case "officiel":
+      $(this).addClass("officiel entete eval4"); 
+      $(this).text("Ce document n'a pas valeur officielle."); 
+      $(this).prev().removeClass("pieddepageloi").addClass("entete")
+      break;
     case "projetloinum": 
       $(this).addClass("numeroloiofficiel eval0");
       $(this).append("<sup>"+$(this).next().text()+"</sup>");
@@ -397,6 +583,53 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
 }); // din each .pc div
 // nettoyages
 //$(".ajour, .editeur").each(function(index){$(this).removeClass("exposant eval0");});
+$("head style").remove();
+$("body").html($("body #page-container"));
+// supprimer les éléments inutiles
+$(".pf div").not($(".pf div div")).contents().unwrap();
+$(".editeur").remove();
+
+//Remettre les entetes en début de page
+$(".entete").each(function(index){$(this).removeClass("entete eval2").addClass("enteteloi");});
+$( "body div div" ).not("body div div div").each(function(index){
+  $(this).prepend($(this).children(".enteteloi"));
+});
+
+// transforme les div en p
+$(".pagetdm div, .texteloi div").each(function(index){
+  var saclass=""+$(this).attr("class") ;
+  var debut4 = saclass.indexOf("ws0") ;
+  if ( saclass ){  saclass = $(this).attr("class").substring(debut4+4);}; 
+  var sonid= "";
+  if ($(this).attr("id")){sonid = " id=\""+$(this).attr("id")+"\" ";}; 
+  var debutwrap="<p"; var finwrap="></p>";
+  var balise;
+  if(saclass.indexOf("titreloiofficiel")!=-1){ balise="titreh1"; };
+  if(saclass.indexOf("grandtitreloi")!=-1){ balise="titreh1"; };
+  if(saclass.indexOf("textegrandtitreloi")!=-1){ balise="titreh1"; };
+  if(saclass.indexOf("chaploi")!=-1){ balise="titreh2"; };
+  if(saclass.indexOf("titrechapitreloi")!=-1){ balise="titreh2"; };
+  if(saclass.indexOf("titreavanttdm")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("sectloi")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("titreavanttdm")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("tdm")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("soussection")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("titresoussection")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("renvoitdm")!=-1){ balise="renvoitdm"; };
+  if(saclass.indexOf("sansrenvoitdm")!=-1){ balise="sansrenvoitdm"; };
+
+  switch (balise) {
+    case "titreh1": debutwrap="<h1"; finwrap="></h1>"; break;
+    case "titreh2": debutwrap="<h2"; finwrap="></h2>"; break;
+    case "titreh3": debutwrap="<h3"; finwrap="></h3>"; break;
+    default:  debutwrap="<p"; finwrap="></p>"; break;
+  };
+  
+  $(this).wrap(debutwrap+" class=\""+saclass+"\" "+sonid+finwrap); 
+  $(this).contents().unwrap();
+});
+
+// effaceeval();
 
 }; // fin function nettoyageloi
 
@@ -414,10 +647,11 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   if(contenu=="e"){return "e";};
   if(contenu==");"){return "suiteparagraphe";};
   if(contenu=="NOTES EXPLICATIVES"){return "notesexplic";};
-  if(contenu=="LE PARLEMENT DU QUÉBEC DÉCRÈTE CE QUI SUIT :"){return "decrete";};
-  if(contenu=="LE PARLEMENT DU QUÉBEC DÉCRÈTE CE QUI SUIT :"){return "decrete";}; // afficher les caractères invisibles pour voir la différence
+  if(contenu=="Ce document a valeur officielle."){return "officiel";};
+  
   if(contenu=="Projet de loi n"){return "projetloinum";};
   if(contenu.substring(0,14)=="Nom de la muni"){return "tableaumunicipal";};
+  if(contenu.substring(0,30)=="LE PARLEMENT DU QUÉBEC DÉCRÈTE"){return "decrete";};
   if(contenu.indexOf("...")!=-1){ return "renvoitdm"; };
   
   var graisse = classff;
@@ -471,6 +705,7 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   };
   if(mot1==="TVH)(DORS"){return "suiteparagraphe";}; // exception TVH)
   if(mot1==="TVH),"){return "suiteparagraphe";}; // exception TVH)
+  if(mot1==="1R"){return "article1R";}; // exception 1R 1.1)
 
   if("|i.|ii.|iii.|iv.|v.|vi.|vii.|viii".indexOf("|"+mot1+"|")!=-1){ return "listeordonnee"; };
   //if(mot1.substring(mot1.length - 1)=="-"){return "listetiret";};
@@ -633,6 +868,13 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   };
 };
 
-function despan(textehtml){
-  return textehtml;
+function faitlelienhref(contenu){
+  var contenulien=contenu;
+  var remplacepoints2 = new RegExp('[\\.]', 'g');
+  contenulien=contenulien.replace(remplacepoints2, '_');
+//  alert(contenulien);
+  if(contenulien.substring(contenulien.length -1)=="_"){contenulien = contenulien.substring(0,contenulien.length -1);};
+  if(contenulien.length>15){contenulien="";}
+  return contenulien;
 };
+
