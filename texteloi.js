@@ -181,6 +181,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         if($(this).prev().hasClass("titreloitexte")){ contenuchoix="suitetitre"; };
         if($(this).prev().hasClass("titrechapitreloi")){ contenuchoix="suitetitre"; };
         if($(this).prev().hasClass("titresectloi")){ contenuchoix="suitetitre"; };
+        if($(this).prev().hasClass("titreannexeloi")){ contenuchoix="suitetitre"; };
         if(contenu.indexOf("DISPOSITIONS MODIFICATIVES")==0){ contenuchoix="titrespecial"; };
         if(contenu.indexOf("AUTRES MODIFICATIONS")==0){ contenuchoix="titrespecial"; };
         if(contenu.indexOf("DISPOSITIONS TRANSITOIRES")==0){ contenuchoix="titrespecial"; };
@@ -316,11 +317,11 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         var contenulien="art"+faitlelienhref($(this).text());
         if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
         if($(this).prev().text().substring(0,1)=="§"){
-          classrenvoi="renvoitdm eval2";
+          classrenvoi="renvoitdm eval4";
         }else{
           classrenvoi="renvoitdm eval3";
         };
-        $(this).prev().removeClass("paragraphe eval2 renvoitdm eval3").addClass(classrenvoi);
+        $(this).prev().removeClass("paragraphe eval2 eval3 eval4 sansrenvoitdm renvoitdm").addClass(classrenvoi);
       };
       $(this).remove();
       break;
@@ -356,7 +357,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
 
     case "renvoitdm": 
       avantentete=0; 
-      $(this).addClass("renvoitdm eval3"); 
+      $(this).removeClass("sansrenvoitdm").addClass("titretdm renvoitdm"); 
       if(contenu.substring(contenu.length-1)=="."){
         // renvoi en attente de numéro
       };
@@ -364,10 +365,10 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         // renvoi complet faire href
         if($(this).children(".ff1").length==1){
           if($(this).children(".ff1").text()[0]=="§"){
-            $(this).removeClass("renvoitdm eval3").addClass("soussectiontdm renvoitdm eval2");      
+            $(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("soussectiontdm renvoitdm eval4");      
             var classrenvoi="soussectiontdm";
           }else{
-            $(this).removeClass("renvoitdm eval3").addClass("soussoussectiontdm renvoitdm eval3");      
+            $(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("soussoussectiontdm renvoitdm eval3");      
             var classrenvoi="soussoussectiontdm";
           };
           var contenu2=$(this).children(".ff1").text();
@@ -380,7 +381,14 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           
         };
         if($(this).children(".ff2").length==1){
-          $(this).removeClass("renvoitdm eval3").addClass("titretdm renvoitdm eval3");
+          $(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm renvoitdm toto");
+          
+          if($(this).prev().hasClass("chapitretdm")){$(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textechapitretdm renvoitdm eval6");};
+          if($(this).prev().hasClass("textechapitretdm")){$(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textechapitretdm renvoitdm eval6");};
+          
+          if($(this).prev().hasClass("sectiontdm")){$(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textesectiontdm renvoitdm eval5");};
+          if($(this).prev().hasClass("textesectiontdm")){$(this).removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textesectiontdm renvoitdm eval5");};
+          
           var contenu5=contenu.substring(0,contenu.indexOf("."))+" ";
           var numarticle=$(this).children(".ff2").text();
           var contenulien="art"+faitlelienhref(numarticle);
@@ -393,7 +401,12 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "suiterenvoitdm": 
       avantentete=0; 
       if(contenu[contenu.length]=="."){$(this).prev().addClass("eval3");};
-      if(contenu[contenu.length]!="."){$(this).prev().removeClass(" eval6").addClass("renvoitdm eval3");};
+      if(contenu[contenu.length]!="."){
+       $(this).prev().removeClass(" eval6 sansrenvoitdm").addClass("renvoitdm");
+       if($(this).prev().hasClass("textechapitretdm")){$(this).prev().removeClass(" eval6 sansrenvoitdm").addClass("renvoitdm eval6");};
+       if($(this).prev().hasClass("textesectiontdm")){$(this).prev().removeClass(" eval5 sansrenvoitdm").addClass("renvoitdm eval5");};
+       if($(this).prev().hasClass("soussectiontdm")){$(this).prev().removeClass(" eval4 sansrenvoitdm").addClass("renvoitdm eval4");};
+      };
       $(this).prev().append(" "+$(this).html());
       if($(this).children(".ff2").length==1){
         contenuprec=$(this).prev().text();
@@ -412,10 +425,10 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       contenutexte=contenutexte.substring(0,contenutexte.indexOf("..."));
       if($(this).text().substring(0,1)=="§"){
         classrenvoi="soussectiontdm";
-        $(this).prev().removeClass("titreitalique eval5").addClass("soussectiontdm eval2");
+        $(this).prev().removeClass("titreitalique eval5 eval2").addClass("titretdm soussectiontdm eval4");
       }else{ 
         classrenvoi="soussoussectiontdm"; 
-        $(this).prev().removeClass("titreitalique eval5").addClass("soussoussectiontdm eval3");
+        $(this).prev().removeClass("titreitalique eval5 eval2").addClass("titretdm soussoussectiontdm eval3");
       };
       
       $(this).prev().html("<span class=\""+classrenvoi+"\">"+$(this).text()+"</span> <i class=\"titretdm\">"+contenutexte+"</i>"); $(this).remove();
@@ -427,7 +440,12 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       var contenulien="art"+faitlelienhref($(this).text());
       $(this).prev().html("<span class=\"titretdm\">"+contenu5+"</span> <b class=\"numarticle\">"+contenu+"</b>");
       if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
-//      $(this).prev().removeClass(" renvoitdm eval3").addClass("titretdm renvoitdm");
+        if($(this).prev().prev().hasClass("grandtitretdm")){ $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textegrandtitretdm renvoitdm eval7"); };
+        if($(this).prev().prev().hasClass("chapitretdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textechapitretdm renvoitdm eval6"); };
+        if($(this).prev().prev().hasClass("sectiontdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textesectiontdm renvoitdm eval5");};
+        if($(this).prev().prev().hasClass("annexetdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm texteannexetdm renvoitdm eval4");};
+
+//      $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm renvoitdm");
       $(this).remove();
       break;
     case "sansrenvoitdm": $(this).addClass("sansrenvoitdm eval4"); avantentete=0; break;
@@ -463,40 +481,70 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "numeroloiofficiel": $(this).addClass("numeroloiofficiel eval0"); break;
     case "titreloiofficiel": $(this).addClass("titreloiofficiel fondleger"); break;
     
-    case "titreloinum": $(this).addClass("titreloinum"); break;
+    case "titreloinum": 
+      if(avanttdm==1){$(this).addClass("titreloinum");};
+      if(avanttdm==0){$(this).addClass("grandtitretdm sansrenvoitdm eval7");};
+      if(avanttdm==2){$(this).addClass("titreloinum");};       
+      break;
     case "titreloitexte": $(this).addClass("titreloitexte eval7"); break;
     
     case "chaploi": 
-      if(avanttdm==1){$(this).addClass("chaploi eval5");};
-      if(avanttdm==0){$(this).addClass("chapitretdm sansrenvoitdm eval5");};
-      if(avanttdm==2){$(this).addClass("chaploi eval5");};
-       
+      if(avanttdm==1){$(this).addClass("chaploi eval6");};
+      if(avanttdm==0){$(this).addClass("chapitretdm sansrenvoitdm eval6");};
+      if(avanttdm==2){$(this).addClass("chaploi eval6");};       
       if($(this).children().length==1){$(this).children().contents().wrapAll("<i></i>")}; 
       $(this).children().contents().unwrap();
       break;
     case "titrechapitreloi": $(this).addClass("titrechapitreloi fondleger"); break;
     
     case "sectloi": 
-      $(this).addClass("sectloi eval6"); 
+      if(avanttdm==1){$(this).addClass("sectloi eval5");};
+      if(avanttdm==0){$(this).addClass("sectiontdm sansrenvoitdm eval5");};
+      if(avanttdm==2){$(this).addClass("sectloi eval5");};
       if($(this).children().length==1){$(this).children().contents().wrapAll("<i></i>")}; 
       $(this).children().contents().unwrap();
       break;
     case "titresectloi": $(this).addClass("titresectloi fondleger"); break;
     
     case "soussection": 
-      $(this).addClass("soussection eval7"); 
+      if(avanttdm==1){$(this).addClass("soussection eval4");};
+      if(avanttdm==0){$(this).addClass("soussectiontdm sansrenvoitdm eval4");};
+      if(avanttdm==2){$(this).addClass("soussection eval4");};
       if($(this).children().length==1){$(this).children().contents().wrapAll("<i></i>")}; 
       $(this).children().contents().unwrap();
       break;
     case "titresoussection": $(this).addClass("titresoussection eval7"); break;
     
-    case "annexeloi": $(this).addClass("annexeloi eval7"); break;
+    case "annexeloi": 
+      if(avanttdm==1){$(this).addClass("annexeloi eval7");};
+      if(avanttdm==0){$(this).addClass("annexetdm sansrenvoitdm eval2");};
+      if(avanttdm==2){$(this).addClass("annexeloi eval7");};
+      break;
     case "titreannexeloi": $(this).addClass("titreannexeloi eval7"); break;
     
     case "titreavanttdm": $(this).addClass("titreavanttdm eval7"); break;
-    case "titretdm": $(this).addClass("titretdm eval6"); break;
-    case "chapitretdm": $(this).addClass("chapitretdm eval5"); break;
-    case "sectiontdm": $(this).addClass("sectiontdm eval6"); break;
+    case "titretdm": 
+      if(avanttdm==1){$(this).addClass("titretdm eval6");};
+      if(avanttdm==0){
+        if($(this).prev().hasClass("grandtitretdm")){$(this).addClass("titretdm textegrandtitretdm sansrenvoitdm eval7");};
+        if($(this).prev().hasClass("chapitretdm")){$(this).addClass("titretdm textechapitretdm sansrenvoitdm eval6");};
+        if($(this).prev().hasClass("sectiontdm")){$(this).addClass("titretdm textesectiontdm sansrenvoitdm eval5");};
+        if($(this).prev().hasClass("annexetdm")){
+          if(contenu==titreentete){}else{$(this).addClass("titretdm texteannexetdm sansrenvoitdm eval2");};
+        };
+        if($(this).is(":first-child")){
+          $(this).addClass("titretdm sansrenvoitdm eval6");
+          if($(this).parent().parent().prev().children().children(".entete").prev().hasClass("titretdm")){
+            $(this).parent().parent().prev().children().children(".entete").prev().append(" "+$(this).text());$(this).remove();
+          };
+        };
+//        $(this).addClass("titretdm sansrenvoitdm eval6");
+        
+      };
+      if(avanttdm==2){$(this).addClass("titretdm eval6");};
+      break;
+    case "chapitretdm": $(this).addClass("chapitretdm eval6"); break;
+    case "sectiontdm": $(this).addClass("sectiontdm eval5"); break;
     case "annexetdm": $(this).addClass("annexetdm eval7"); break;
     
     case "decrete": $(this).addClass("decrete fondleger"); break;
@@ -613,6 +661,7 @@ $(".pagetdm div, .texteloi div").each(function(index){
   if(saclass.indexOf("sectloi")!=-1){ balise="titreh3"; };
   if(saclass.indexOf("titreavanttdm")!=-1){ balise="titreh3"; };
   if(saclass.indexOf("tdm")!=-1){ balise="titreh3"; };
+  if(saclass.indexOf("parttdm")!=-1){ balise="titreh3"; };
   if(saclass.indexOf("soussection")!=-1){ balise="titreh3"; };
   if(saclass.indexOf("titresoussection")!=-1){ balise="titreh3"; };
   if(saclass.indexOf("renvoitdm")!=-1){ balise="renvoitdm"; };
@@ -629,7 +678,7 @@ $(".pagetdm div, .texteloi div").each(function(index){
   $(this).contents().unwrap();
 });
 
-// effaceeval();
+ effaceeval();
 
 }; // fin function nettoyageloi
 

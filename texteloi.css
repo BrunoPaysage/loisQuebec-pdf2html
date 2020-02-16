@@ -4,9 +4,10 @@
 .titreavanttdm {font-size:11pt; line-height:1.3em;   margin-top:1em;} 
 
 .tdm {font-size:11pt; line-height:1.3em; font-weight:bold;  margin-top:2em;} 
-.titretdm, .chapitretdm, .sectiontdm, .soussectiontdm, .soussoussectiontdm, .annexetdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em;} 
-.renvoitdm, .sansrenvoitdm {font-size:10pt; line-height:1em; } 
-.renvoitdm b {float:right;} 
+.grandtitretdm, .chapitretdm, .sectiontdm, .soussectiontdm, .soussoussectiontdm, .annexetdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em; margin-bottom:0em;} 
+.titretdm, .textegrandtitretdm, .textechapitretdm, .textesectiontdm, .textesoussectiontdm, .textesoussoussectiontdm, .texteannexetdm { margin:0em; font-size:10pt; line-height:1em; }
+.renvoitdm, .sansrenvoitdm { } 
+.renvoitdm b.numarticle {float:right; margin:0em; } 
 
 .enteteloi { clear:both; border-bottom:solid 1px #ddd; padding-top:0.5em; color:#ddd;font-size:10.5pt; line-height:1em; } 
 #pf1 .enteteloi {width:100%; text-align:right; border-bottom:solid 0px #ddd; color:#aaa; } 
