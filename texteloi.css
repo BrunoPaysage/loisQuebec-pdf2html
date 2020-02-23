@@ -29,6 +29,9 @@
 .soussection {background-color:#cce; margin-top:2em; font-weight: normal; }
 .titresoussection {font-size:11pt; line-height:1.3em; font-weight: normal;   margin-top:1em; background-color:#cce; text-align: left; }
 
+.titregras {background-color:#cce; margin-top:2em; font-weight: bold; }
+.titreitalique {background-color:#cce; margin-top:2em; font-style: italic; }
+
 .articleloi {font-size:11pt; line-height:1.3em;   margin-top:1em; } 
 .articleloi .numeroarticle {padding-right:0.5em; } 
 .numeroarticle {font-size:14pt; line-height:0.8em; } 

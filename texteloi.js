@@ -6,9 +6,11 @@ function chargefichier(){
     if(statusTxt == "success") { 
       $("head").append($("style")); 
       $("head title").html(nomfichier);
-      nettoyageloi();
-      // effaceeval(); // décocher pour avoir un texte sur fond blanc
-       
+      nettoyageloi(); $("head script[src=\"texteloi.js\"]").remove();
+      effaceeval(); // mettre en remarque pour avoir la coloration
+      $("body").append("<script src=\"liensarticlesloi.js\"></script>"); $("body script").remove(); // mettre en remarque pour supprimer les liens dans les articles
+      nettoyagescript(); // mettre en remarque pour garder le jquery
+      // supprimepagination(); // mettre en remarque pour garder la structure paginée
     }; 
     if(statusTxt == "error") { alert("erreur: "+xhr.status+" "+xhr.statusText); }; 
   });
@@ -29,7 +31,6 @@ var classnormal="ff1";
 var classgras="ff2";
 var classitalique="ff3";
 
-
 var premiereligne = $("#pf1 .pc1 div:first-child").text();
 
 if(premiereligne.substring(0,8)=="chapitre"){
@@ -40,11 +41,17 @@ if(premiereligne.substring(0,8)=="chapitre"){
 };
 if(premiereligne=="1"){
   typetexte="pl44"; 
-  classgras=""+$("#pf2 .pc2 div:nth-child(2)").attr("class").split(" ")[5];
+//  classgras=""+$("#pf2 .pc2 div:nth-child(2)").attr("class").split(" ")[5];
   $(".pc div:first-child").each(function(index){$(this).addClass("pageloipdf eval3")});
+  $("#pf1 .pc1 div:nth-child(2)").addClass("legislature fondleger");
+  classgras="ff3";
+  classitalique="ff8";
 };
 if(premiereligne.indexOf("LÉGISLATURE")!=-1){
   typetexte="pl36";
+  $("#pf1 .pc1 div:nth-child(1)").addClass("legislature fondleger");
+  classgras="ff3";
+  classitalique="ff8";
 };
 
 
@@ -73,6 +80,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
   if(($(this).is(":first-child"))&&(contenu==premieritemloi)){ typepage="texteloi"; avanttdm=2;};
   if(($(this).is(":first-child"))&&(typepage=="pagetdm")&&(contenu.substring(0,2)=="1.")){typepage="texteloi"; avanttdm=2;};
   if($(this).is(":first-child")){ $("#"+idpage).addClass(typepage);};
+  if(typetexte="pl44"){if($(this).is(":nth-child(2)")){ $("#"+idpage).addClass(typepage);};};
   var typeligne="";
   var classligne=$(this).attr("class");
   
@@ -94,10 +102,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     if($(this).prev().hasClass("refarticle")){ contenuchoix="suiteparagraphe";};
   };
   if( (avantentete==1) && (precclasssup.indexOf(class3)!=-1) ){
-    if(contenu =="À jour au "){precclasssup.splice(precclasssup.indexOf(class3),1,"");}else{testecontenu="non"; contenuchoix="supsub";
-      
-    };
-    
+    if(contenu =="À jour au "){precclasssup.splice(precclasssup.indexOf(class3),1,"");}else{testecontenu="non"; contenuchoix="supsub"; };
   };
   if( ($(this).prev().hasClass("editeur")) && ($(this).hasClass("ff1")) ){
     testecontenu="non"; contenuchoix="pageloipdf";
@@ -112,7 +117,8 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     if (contenuchoix=="refarticle"){ classrefarticle=class3; };
         
     if (contenuchoix=="notesexplic"){ 
-      classgras=class5; contenuchoix="titregras"; classitalique=$(this).next().attr("class").split(" ")[5]
+      classgras=class5; contenuchoix="titregras"; $(this).addClass("titreexplic");
+      // classitalique=$(this).next().attr("class").split(" ")[5]
     };
     
     if (contenuchoix=="listeordonnee"){ 
@@ -197,7 +203,6 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         };
       };
       if($(this).prev().hasClass("titreloiofficiel")){ 
-//        if(ecartligne<127){contenuchoix="suitetitregras";};
         contenuchoix="suitetitregras";
       };
       if($(this).prev().hasClass("titregras")){ 
@@ -245,11 +250,8 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     if (contenuchoix=="formule"){
       if ($(this).prev().hasClass("formule")){contenuchoix="suiteparagraphe";};
     };
-
-// alert(contenuchoix+" "+contenu);
   };
 
-  
   
   // Action en fonction du choix d'action
   switch (contenuchoix) {
@@ -262,16 +264,21 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       $(this).children("span.ff1").contents().unwrap();
     case "article": 
       $(this).addClass("article eval4"); 
-      if($(this).children("b").length==0){ $(this).contents().wrap("<b class=\"numarticle\"></b>"); };
-      if($(this).children("b:first-child").text()!=contenu.split(" ")[0]){ $(this).children("b:first-child").append($(this).children("b").eq(1).text()); $(this).children("b").eq(1).remove(); };
-      
-      if($(this).children("b:first-child").text()!=contenu.split(" ")[0]){ $(this).children("b:first-child").append($(this).children("b").eq(1).text()); $(this).children("b").eq(1).remove(); };
-      
-      $(this).children(".numarticle + .numarticle").contents().unwrap();
+      $(this).children("span.ff1").contents().wrap("<temp></temp>");
       $(this).children("span.ff1").contents().unwrap();
-      $(this).children("span").contents().wrapAll("<i></i>");
-      $(this).children("span").contents().unwrap();
-      
+      $(this).contents().wrap("<b class=\"numarticle\"></b>");
+      $(this).contents("b.numarticle").not(":first-child").contents().unwrap();
+      if($(this).children("b").eq(0).text()=="1"){
+        var contenu3=$(this).text().split(" ");
+        var debut=contenu3[0]; contenu3[0]="";
+        $(this).html("<b class=\"numarticle\">"+debut+"</b>"+contenu3.join(" "));
+      };
+      if($(this).children("b").eq(0).text()=="83.1"){
+        var contenu3=$(this).text().split(" ");
+        var debut=contenu3[0]; contenu3[0]="";
+        $(this).html("<b class=\"numarticle\">"+debut+"</b>"+contenu3.join(" "));
+      };
+      $(this).children("temp").contents().unwrap();      
       var contenulien="art"+faitlelienhref($(this).children("b.numarticle").text());
       var contenu5=contenulien;
       $(this).children("b.numarticle").attr("id",contenu5);
@@ -284,7 +291,14 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "paragraphe": 
       $(this).addClass("paragraphe eval2"); 
       if(class5==classgras){
-        $(this).contents().wrap("<b class\"buzz2\"></b>");
+        if($(this).children().length!=0){
+          $(this).children().contents().wrap("<i></i>");
+          $(this).children().contents().unwrap();
+          $(this).children("i").each(function(index){
+            if($(this).text()==" "){$(this).contents().unwrap();};
+          });
+        };
+        $(this).contents().wrap("<b class=\"buzz2\"></b>");
       };
       if(class5==classitalique){
         $(this).contents().wrapAll("<i></i>");
@@ -307,7 +321,32 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       break;
     case "suiteparagraphe":
       $(this).addClass("suiteparagraphe eval3"); 
-      if(class5==classgras){ $(this).contents().wrap("<b class\=\"numarticle\"></b>"); };
+
+      if((class5!=classgras)&&(class5!=classitalique)){
+        if($(this).prev().children().length>0){
+          if($(this).prev().html().lastIndexOf("</b>")==$(this).prev().html().length-4){
+          };
+        };
+      };
+
+      if(class5==classgras){
+        if($(this).children().length!=0){
+          $(this).children().contents().wrap("<i></i>");
+          $(this).children().contents().unwrap();
+          $(this).children("i").each(function(index){
+            if($(this).text()==" "){$(this).contents().unwrap();};
+          });
+        };
+        if($(this).prev().hasClass("titreloiofficiel")){
+          // ne pas ajouter la balise b
+        }else{
+          if($(this).prev().hasClass("titretdm")){
+            $(this).contents().wrap("<b class=\"numarticle\"></b>");
+          }else{
+            $(this).contents().wrap("<b class=\"buzz2\"></b>");
+          };
+        };
+      };
       if(class5==classitalique){
         if($(this).children().length==1){$(this).contents().wrap("<i></i>");};
         if($(this).children().length==0){$(this).contents().wrapAll("<i></i>");};
@@ -317,6 +356,11 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         $(this).children().contents().wrap("<i></i>");
         $(this).children().contents().unwrap();        
       };
+      if($(this).children("i").length>0){
+        $(this).children("i").each(function(index){
+          if($(this).text()=="‐"){$(this).html("-");$(this).contents().unwrap();};
+        });
+      };
       if($(this).prev().hasClass("pageloipdf")){
         if(typetexte=="pl44"){
           $(this).parent().parent().prev().children(".pc").children("div:last-child").append(" "+$(this).html());
@@ -324,24 +368,24 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       }else{
         $(this).prev().append(" "+$(this).html());
       };
-      if(class5==classgras){ 
+      if(avanttdm==0){
+        if(class5==classgras){ 
         // fabrique le href
-        var contenulien="art"+faitlelienhref($(this).text());
-        if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
-        if($(this).prev().text().substring(0,1)=="§"){
-          classrenvoi="renvoitdm eval4";
-        }else{
-          classrenvoi="renvoitdm eval3";
+          var contenulien="art"+faitlelienhref($(this).text());
+          if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+          if($(this).prev().text().substring(0,1)=="§"){
+            classrenvoi="renvoitdm eval4";
+          }else{
+            classrenvoi="renvoitdm eval3";
+          };
+          $(this).prev().removeClass("paragraphe eval2 eval3 eval4 sansrenvoitdm renvoitdm").addClass(classrenvoi);
         };
-        $(this).prev().removeClass("paragraphe eval2 eval3 eval4 sansrenvoitdm renvoitdm").addClass(classrenvoi);
       };
       if($(this).prev().hasClass("tableaumunicipal")){
         var derniercar = contenu.substring(contenu.length-2);
         if(derniercar[0]=="$"){$(this).prev().html(decoupetableauminicipal($(this).prev().text()));};
         if("0123456789".indexOf(derniercar[1])!=-1){
           $(this).prev().html(decoupetableauminicipal($(this).prev().text()));
-        }else{
-//          if(" ".indexOf(contenu.substring(contenu.length-1))!=-1){ $(this).next().addClass("exception tableaumunicipal"); };
         };
       };
       $(this).remove();
@@ -679,14 +723,15 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
   precxligne = xligne;
   precyligne = yligne;
 
-}); // din each .pc div
+}); // fin each .pc div
+
 // nettoyages
-//$(".ajour, .editeur").each(function(index){$(this).removeClass("exposant eval0");});
 $("head style").remove();
 $("body").html($("body #page-container"));
 // supprimer les éléments inutiles
 $(".pf div").not($(".pf div div")).contents().unwrap();
 $(".editeur").remove();
+
 
 //Remettre les entetes en début de page
 $(".entete").each(function(index){$(this).removeClass("entete eval2").addClass("enteteloi");});
@@ -694,7 +739,7 @@ $( "body div div" ).not("body div div div").each(function(index){
   $(this).prepend($(this).children(".enteteloi"));
 });
 
-// transforme les div en p
+// transforme les div en p et h
 $(".pagetdm div, .texteloi div").each(function(index){
   var saclass=""+$(this).attr("class") ;
   var debut4 = saclass.indexOf("ws0") ;
@@ -807,7 +852,6 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   if(mot1==="1R"){return "article1R";}; // exception 1R 1.1)
 
   if("|i.|ii.|iii.|iv.|v.|vi.|vii.|viii".indexOf("|"+mot1+"|")!=-1){ return "listeordonnee"; };
-  //if(mot1.substring(mot1.length - 1)=="-"){return "listetiret";};
   if(mot1=="—"){
     if(contenu.indexOf("—",3)!=-1){return "suiteparagraphe";}else{return "listetiret";};
   };
@@ -964,7 +1008,7 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   if(mot1=="-"){
     return "listetiret";
   }else{
-    if(contenu.indexOf("LÉGISLATURE")!=-1){ return "legislature"; };
+//    if(contenu.indexOf("LÉGISLATURE")!=-1){ return "legislature"; };
     return "suiteparagraphe";
   };
 };
@@ -973,6 +1017,8 @@ function faitlelienhref(contenu){
   var contenulien=contenu;
   var remplacepoints2 = new RegExp('[\\.]', 'g');
   contenulien=contenulien.replace(remplacepoints2, '_');
+  var remplacepoints3 = new RegExp('[ $]', 'g');
+  contenulien=contenulien.replace(remplacepoints3, '');
 //  alert(contenulien);
   if(contenulien.substring(contenulien.length -1)=="_"){contenulien = contenulien.substring(0,contenulien.length -1);};
   if(contenulien.length>15){contenulien="";}
@@ -1038,5 +1084,14 @@ function effaceeval(){
   $(".eval7").removeClass("eval7");
 };
 
+function nettoyagescript(){
+  $("body script").remove();
+  $("head").contents().not($("head").children()).wrap("<temp></temp>"); $("head temp").remove();
+  $("head script").remove();
+};
 
+function supprimepagination(){
+  $("body div").contents().unwrap();
+  $("body div").contents().unwrap();
+};
 
