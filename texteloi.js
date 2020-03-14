@@ -7,7 +7,7 @@ function chargefichier(){
       $("head").append($("style")); 
       $("head title").html(nomfichier);
       nettoyageloi(); $("head script[src=\"texteloi.js\"]").remove();
-      effaceeval(); // mettre en remarque pour avoir la coloration
+//      effaceeval(); // mettre en remarque pour avoir la coloration
       $("body").append("<script src=\"liensarticlesloi.js\"></script>"); $("body script").remove(); // mettre en remarque pour supprimer les liens dans les articles
       nettoyagescript(); // mettre en remarque pour garder le jquery
       // supprimepagination(); // mettre en remarque pour garder la structure paginée
@@ -45,7 +45,8 @@ if(premiereligne=="1"){
   $(".pc div:first-child").each(function(index){$(this).addClass("pageloipdf eval3")});
   $("#pf1 .pc1 div:nth-child(2)").addClass("legislature fondleger");
   classgras="ff3";
-  classitalique="ff8";
+  classitalique="ff6";
+  $("#pf1 .pc1 div:last-child").prev().attr("class",$("#pf1 .pc1 div:last-child").prev().attr("class").replace("ff4","ff3"));
 };
 if(premiereligne.indexOf("LÉGISLATURE")!=-1){
   typetexte="pl36";
@@ -74,6 +75,7 @@ var tableaumunicip="non";
 $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf").each(function(index){
   var contenu = $(this).text();
   var contenuchoix=contenu;
+  
   if($(this).is(":first-child")){avantentete=1;};
   idpage=$(this).parent().parent().attr("id");
   
@@ -108,7 +110,18 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     testecontenu="non"; contenuchoix="pageloipdf";
   };
 
-  
+  // élimination de span autour de tiret
+  if($(this).children().length!=0){
+    if($(this).text()==="‐"){$(this).html("-");$(this).contents().unwrap();};
+    $(this).children().each(function(index){
+      if($(this).text()==="‑"){$(this).html("-");$(this).contents().unwrap();};
+      if($(this).text()==="‐"){$(this).html("-");$(this).contents().unwrap();};
+    });
+    if($(this).children().children().text()==="‐"){ 
+      $(this).children().children().html("-");
+      $(this).children().children().contents().unwrap(); 
+    };
+  };
   // choix d'action en fonction du contenu de la ligne
   if(testecontenu=="oui"){
     var contenuchoix = typecontenu(contenu, class5, classgras, classitalique);
@@ -121,16 +134,16 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       // classitalique=$(this).next().attr("class").split(" ")[5]
     };
     
-    if (contenuchoix=="listeordonnee"){ 
-      if(contenu.substring(0,2)==="a)"){
-        classitalique=$(this).attr("class").split(" ")[5];
-      };
-    };
-    
     if (contenuchoix=="tableaumunicipal"){ tableaumunicip="oui"; contenuchoix="tableaumunicipal";};
 
     // modification du choix d'action en fonction du contexte
-    if ((contenuchoix=="paragraphe")||(contenuchoix=="oups")){
+    if (contenuchoix=="suiteparagraphe"){ 
+      if(ecartligne>14){
+        if(contenu.substr(0,1).toUpperCase()==contenu.substr(0,1)){ contenuchoix="paragraphe" ;};
+      };
+    };
+    
+    if (contenuchoix=="paragraphe"){
       if($(this).is(".pc div:first-child")){
         var lesmotsprec= $(this).parent().parent().prev().children().children(".entete").prev().text().split(" ");
       }else{
@@ -139,7 +152,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       if($(this).prev().hasClass("numeroloiofficiel")){ contenuchoix="titreloiofficiel";};
       var nbmotsprec=lesmotsprec.length;
       var derniermot=lesmotsprec[nbmotsprec-1];
-      if("|le|la|de|du|les|des|à|au|aux|et|(chapitre|c.|for|".indexOf("|"+derniermot+"|")!=-1){
+      if("|le|la|de|du|les|des|à|au|aux|et|(chapitre|c.|for|1er|".indexOf("|"+derniermot+"|")!=-1){
         contenuchoix="suiteparagraphe";
       };
       if(derniermot[derniermot.length-1]=="-"){contenuchoix="suiteparagraphe";};
@@ -151,27 +164,45 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           if($(this).prev().hasClass("renvoitdm")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("titre")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("titretdm")){ contenuchoix="paragraphe"; };
-        };
-        
+        };   
       };
+      if((typetexte=="pl44")||(typetexte=="pl36")){ 
+        var remplacefi = new RegExp('[]', 'g');
+        contenu2=$(this).prev().html();
+        if(contenu2){contenu2 = contenu2.replace(remplacefi, 'fi');
+        $(this).prev().html(contenu2);};
+        var remplaceffi = new RegExp('[]', 'g');
+        contenu2=$(this).prev().html();
+        if(contenu2){contenu2 = contenu2.replace(remplaceffi, 'ffi');
+        $(this).prev().html(contenu2);};
+        contenu2=$(this).html();
+        if(contenu2){contenu2 = contenu2.replace(remplaceffi, 'ffi');
+        $(this).html(contenu2);};
+      };
+
       if(tableaumunicip=="oui"){ contenuchoix="tableaumunicipal";};
     };   
         
-    if (contenuchoix=="listedegre"){
+    if((contenuchoix=="listedegre")||(contenuchoix=="listeordonnee")){
       if($(this).is(".pc div:first-child")){
         var lesmotsprec= $(this).parent().parent().prev().children().children(".entete").prev().text().split(" ");
       }else{
         var lesmotsprec=$(this).prev().text().split(" "); 
       };
       var nbmotsprec=lesmotsprec.length;
-      var derniermot=lesmotsprec[nbmotsprec-1];if("|à|le|de|ou|au|aux|et|".indexOf("|"+derniermot+"|")!=-1){contenuchoix="suiteparagraphe";};
+      var derniermot=lesmotsprec[nbmotsprec-1];if("|à|le|de|ou|au|aux|et|(chapitre|".indexOf("|"+derniermot+"|")!=-1){contenuchoix="suiteparagraphe";};
     }; 
+    
+    if (contenuchoix=="listeordonnee"){ 
+      if(contenu.substring(0,2)==="a)"){
+        classitalique=$(this).attr("class").split(" ")[5];
+      };
+    };
          
     if (contenuchoix=="titre"){ 
       if(avanttdm==1){contenuchoix="titreavanttdm";};
       if(avanttdm==0){
         contenuchoix="titretdm";
-        if($(this).prev().hasClass("toto")){ contenuchoix="titretdm"; };
         if(contenu.indexOf("DISPOSITIONS MODIFICATIVES")==0){ contenuchoix="titrespecialtdm"; };
         if(contenu.indexOf("AUTRES MODIFICATIONS")==0){ contenuchoix="titrespecialtdm"; };
         if(contenu.indexOf("DISPOSITIONS TRANSITOIRES")==0){ contenuchoix="titrespecialtdm"; };
@@ -193,7 +224,8 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         if(contenu.indexOf("DISPOSITION FINALE")==0){ contenuchoix="titrespecial"; };
         if(contenu.indexOf("DISPOSITIONS FINALES")==0){ contenuchoix="titrespecial"; };
       };
-    };   
+    };  
+
     if (contenuchoix=="titregras"){ 
       if($(this).prev().hasClass("numeroloiofficiel")){ 
         contenuchoix="titreloiofficiel"; 
@@ -209,6 +241,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         contenuchoix="suitetitregras";
       };
     };  
+
     if(contenuchoix=="titretdm"){
       if($(this).prev().hasClass("titretdm")){ 
         if($(this).prev().hasClass("renvoitdm")){ 
@@ -227,7 +260,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     if (contenuchoix=="soussection"){
       if ($(this).prev().hasClass("renvoitdm")){contenuchoix="suitetdmsoussection";};
     };
-       
+      
     if (contenuchoix=="definition"){
       if($(this).is(".pc div:first-child")){
         var contenusprec= $(this).parent().parent().prev().children().children(".entete").prev().text();
@@ -240,6 +273,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
          
     if (contenuchoix=="numeroseul"){
       if ((ecartligne>0)&&(ecartligne<15)){ contenuchoix="suiteparagraphe";};
+
       if (ecartligne >14){contenuchoix="paragraphe";};
       try {
         if (precclassligne.indexOf("renvoitdm")!=-1){contenuchoix="numarticletdm";};
@@ -250,40 +284,54 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     if (contenuchoix=="formule"){
       if ($(this).prev().hasClass("formule")){contenuchoix="suiteparagraphe";};
     };
+    
+    if (contenuchoix=="citation"){
+      if(contenu[2]!=" "){
+        contenuhtml=$(this).html();
+        contenuhtml="« "+contenuhtml.substring(1)
+        $(this).html(contenuhtml);
+        if(contenuhtml.indexOf(".</span>")!=-1){
+          $(this).html(contenuhtml.substring(0,contenuhtml.indexOf(".</span>")+8)+" "+contenuhtml.substring(contenuhtml.indexOf(".</span>")+8));
+        };
+        contenu=$(this).text();
+        contenuchoix = typecontenu(contenu, class5, classgras, classitalique);
+       };
+    };
   };
 
-  
+
+
   // Action en fonction du choix d'action
   switch (contenuchoix) {
     case "article1R": 
-      $(this).children("span:first-child").remove(); 
-      var contenu5=""+$(this).html().substring(0,2)+$(this).html().substring(2);
-      $(this).html(contenu5);
-      $(this).contents().wrap("<b class=\"numarticle\"></b>");
-      $(this).children(".numarticle + .numarticle").contents().unwrap();
-      $(this).children("span.ff1").contents().unwrap();
+      $(this).html("1R"+$(this).html().substring(21));
     case "article": 
       $(this).addClass("article eval4"); 
-      $(this).children("span.ff1").contents().wrap("<temp></temp>");
-      $(this).children("span.ff1").contents().unwrap();
+      try{ var classneutre=$(this).children("span:first-child").attr("class").split(" ")[0]; }
+      catch(error) {classneutre="ff1";};
+      $(this).children("span."+classneutre).contents().wrap("<temp></temp>");
+      $(this).children("span."+classneutre).contents().unwrap();
       $(this).contents().wrap("<b class=\"numarticle\"></b>");
-      $(this).contents("b.numarticle").not(":first-child").contents().unwrap();
-      if($(this).children("b").eq(0).text()=="1"){
-        var contenu3=$(this).text().split(" ");
-        var debut=contenu3[0]; contenu3[0]="";
-        $(this).html("<b class=\"numarticle\">"+debut+"</b>"+contenu3.join(" "));
-      };
-      if($(this).children("b").eq(0).text()=="83.1"){
-        var contenu3=$(this).text().split(" ");
-        var debut=contenu3[0]; contenu3[0]="";
-        $(this).html("<b class=\"numarticle\">"+debut+"</b>"+contenu3.join(" "));
-      };
+      $(this).children("b.numarticle").children("temp").parent().contents().unwrap();
       $(this).children("temp").contents().unwrap();      
+      var mot1=$(this).children("b").eq(0).text();
+      if("0123456789".indexOf(mot1.substring(mot1.length-1))!=-1){
+        var contenu4=$(this).children("b").text();
+        var contenu5=$(this).not("b").html();
+        var nbb=$(this).children("b").length;
+        $(this).html("<b class=\"numarticle\">"+contenu4+"</b> "+contenu5);
+        $(this).children("b+b").remove();
+      };  
       var contenulien="art"+faitlelienhref($(this).children("b.numarticle").text());
       var contenu5=contenulien;
       $(this).children("b.numarticle").attr("id",contenu5);
       var lesclass=$(this).attr("class").replace(class5,"fff");
       $(this).attr("class",lesclass);
+      if($(this).children("."+classitalique)){
+        $(this).children("."+classitalique).contents().wrap("<i></i>"); 
+        $(this).children().not("b").contents().unwrap(); 
+        $(this).children("i").children("i span.ff1").parent().contents().unwrap().contents().unwrap();
+      };
       break;
 
     case "refarticle": $(this).addClass("refarticle eval1"); break;
@@ -298,7 +346,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
             if($(this).text()==" "){$(this).contents().unwrap();};
           });
         };
-        $(this).contents().wrap("<b class=\"buzz2\"></b>");
+        $(this).contents().wrap("<b></b>");
       };
       if(class5==classitalique){
         $(this).contents().wrapAll("<i></i>");
@@ -323,8 +371,11 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       $(this).addClass("suiteparagraphe eval3"); 
 
       if((class5!=classgras)&&(class5!=classitalique)){
-        if($(this).prev().children().length>0){
-          if($(this).prev().html().lastIndexOf("</b>")==$(this).prev().html().length-4){
+        var contenuprec2=$(this).prev().html();
+        if(contenuprec2){
+          if(contenuprec2.length-contenuprec2.lastIndexOf("</b>")==4){
+            var contenu=$(this).html();
+            $(this).prepend("<br>");$(this).contents().wrap("<b></b>");
           };
         };
       };
@@ -343,31 +394,44 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           if($(this).prev().hasClass("titretdm")){
             $(this).contents().wrap("<b class=\"numarticle\"></b>");
           }else{
-            $(this).contents().wrap("<b class=\"buzz2\"></b>");
+            $(this).contents().wrap("<b></b>");
           };
         };
       };
+      
       if(class5==classitalique){
         if($(this).children().length==1){$(this).contents().wrap("<i></i>");};
         if($(this).children().length==0){$(this).contents().wrapAll("<i></i>");};
         $(this).children("i").has("> span").contents("span").unwrap().contents().unwrap();
       };
+      
       if($(this).children().hasClass(classitalique)){
-        $(this).children().contents().wrap("<i></i>");
-        $(this).children().contents().unwrap();        
+        $(this).children("."+classitalique).contents().wrap("<i></i>"); 
+        $(this).children().contents().unwrap(); 
+        $(this).children("i").children("i span.ff1").parent().contents().unwrap().contents().unwrap();
+        $(this).children("."+classitalique).contents().wrap("<i></i>"); 
+        $(this).children("."+classitalique).contents().unwrap(); 
+        $(this).children("i").children("i span.ff1").parent().contents().unwrap().contents().unwrap();
       };
+      
       if($(this).children("i").length>0){
         $(this).children("i").each(function(index){
           if($(this).text()=="‐"){$(this).html("-");$(this).contents().unwrap();};
         });
       };
+      
       if($(this).prev().hasClass("pageloipdf")){
         if(typetexte=="pl44"){
           $(this).parent().parent().prev().children(".pc").children("div:last-child").append(" "+$(this).html());
         };
       }else{
-        $(this).prev().append(" "+$(this).html());
+        if($(this).is(".pc div:first-child")){
+          $(this).parent().parent().prev().children().children(".entete").prev().append(" "+$(this).html());
+        }else{
+          $(this).prev().append(" "+$(this).html());    
+        };
       };
+      
       if(avanttdm==0){
         if(class5==classgras){ 
         // fabrique le href
@@ -381,6 +445,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           $(this).prev().removeClass("paragraphe eval2 eval3 eval4 sansrenvoitdm renvoitdm").addClass(classrenvoi);
         };
       };
+      
       if($(this).prev().hasClass("tableaumunicipal")){
         var derniercar = contenu.substring(contenu.length-2);
         if(derniercar[0]=="$"){$(this).prev().html(decoupetableauminicipal($(this).prev().text()));};
@@ -388,6 +453,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           $(this).prev().html(decoupetableauminicipal($(this).prev().text()));
         };
       };
+      
       $(this).remove();
       break;
 
@@ -492,7 +558,6 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       break;
 
     case "suitetdmsoussection": 
-      //$(this).addClass("tdmsoussection eval0");
       var contenutexte=$(this).prev().text();
       contenutexte=contenutexte.substring(0,contenutexte.indexOf("..."));
       if($(this).text().substring(0,1)=="§"){
@@ -512,12 +577,10 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       var contenulien="art"+faitlelienhref($(this).text());
       $(this).prev().html("<span class=\"titretdm\">"+contenu5+"</span> <b class=\"numarticle\">"+contenu+"</b>");
       if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
-        if($(this).prev().prev().hasClass("grandtitretdm")){ $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textegrandtitretdm renvoitdm eval7"); };
-        if($(this).prev().prev().hasClass("chapitretdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textechapitretdm renvoitdm eval6"); };
-        if($(this).prev().prev().hasClass("sectiontdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textesectiontdm renvoitdm eval5");};
-        if($(this).prev().prev().hasClass("annexetdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm texteannexetdm renvoitdm eval4");};
-
-//      $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm renvoitdm");
+      if($(this).prev().prev().hasClass("grandtitretdm")){ $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textegrandtitretdm renvoitdm eval7"); };
+      if($(this).prev().prev().hasClass("chapitretdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textechapitretdm renvoitdm eval6"); };
+      if($(this).prev().prev().hasClass("sectiontdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textesectiontdm renvoitdm eval5");};
+      if($(this).prev().prev().hasClass("annexetdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm texteannexetdm renvoitdm eval4");};
       $(this).remove();
       break;
     case "sansrenvoitdm": $(this).addClass("sansrenvoitdm eval4"); avantentete=0; break;
@@ -525,17 +588,23 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
 
     case "listeordonnee": 
       $(this).addClass("listeordonnee eval4"); 
-      var contenu2=contenu.substring(0,contenu.indexOf(")")+2);
-      var contenu5=$(this).text().substring(contenu.indexOf(")")+2);
-      $(this).html("<i>"+contenu2+"</i> "+contenu5);
-      var lesclass=$(this).attr("class").replace(class5,"fff");
-      $(this).attr("class",lesclass);
+      if(contenu.indexOf(")")!=-1){
+        var contenu2=contenu.substring(0,contenu.indexOf(")")+2);
+        var contenu5=$(this).text().substring(contenu.indexOf(")")+2);
+        $(this).html("<i>"+contenu2+"</i> "+contenu5);       
+        var lesclass=$(this).attr("class").replace(class5,"fff");
+        $(this).attr("class",lesclass);
+      };
       break;
     case "listedegre": 
       $(this).addClass("listedegre eval5"); 
-      if(!$(this).children().length==0){
+      if($(this).children().length!=0){
         $(this).children().contents().wrap("<i></i>");
         $(this).children().contents().unwrap();
+        if($(this).children().children(".ff1").length!=0){ $(this).children().children(".ff1").parent().contents().unwrap().contents().unwrap(); };
+      };
+      if($(this).children().length==0){
+        if($(this).hasClass(classitalique)){$(this).contents().wrap("<i></i>")};
       };
       break;
     case "listetiret": $(this).addClass("listetiret eval6"); break;
@@ -546,8 +615,45 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         $(this).children().contents().unwrap();
       };
       break;
-    case "citation": $(this).addClass("citation eval6"); break;
-    case "citationarticle": $(this).addClass("citationarticle eval5"); break;
+    case "citation": 
+      $(this).addClass("citation eval6"); 
+      if($(this).hasClass(classitalique)){$(this).contents().wrap("<i></i>")};
+      break;
+    case "citationavenir": $(this).next().prepend($(this).html()); $(this).remove(); break;
+    case "citationarticle": 
+      $(this).addClass("citationarticle eval6"); 
+      var classneutre=$(this).children("span:first-child").attr("class").split(" ")[0];
+      $(this).children("span."+classneutre).contents().wrap("<temp></temp>");
+      $(this).children("span."+classneutre).contents().unwrap();
+      $(this).children().children("span.ff1").contents().unwrap();
+      $(this).contents().wrap("<b class=\"numarticle\"></b>");
+      $(this).contents("b.numarticle").not(":nth-child(2)").contents().unwrap();
+      var mot1=$(this).children("b").eq(0).text();
+      if("0123456789".indexOf(mot1.substring(mot1.length-1))!=-1){
+        var contenu3=$(this).text().split(" ");
+        var debut=contenu3[0]; contenu3[0]="";
+        $(this).html("<b class=\"numarticle\">"+debut+"</b>"+contenu3.join(" "));
+      };  
+
+      $(this).children("temp").contents().unwrap();      
+      var contenulien="art"+faitlelienhref($(this).children("b.numarticle").text());
+      var contenu5=contenulien;
+      $(this).children("b.numarticle").attr("id",contenu5);
+      var lesclass=$(this).attr("class").replace(class5,"fff");
+      $(this).attr("class",lesclass);
+      break;
+    case "citationlistedegre": $(this).addClass("citationlistedegre eval6"); break;
+    case "citationlisteordonnee": 
+      $(this).addClass("citationlisteordonnee eval6"); 
+      var contenu3=$(this).text().split(" ");
+      var debut=contenu3[1]; contenu3[0]=""; contenu3[1]="";
+      $(this).html("« <i class=\"citeliste\">"+debut+"</i>"+contenu3.join(" "));
+      break;
+    case "citationdefinition": $(this).addClass("citationdefinition eval6"); break;
+    case "citationtitre": $(this).addClass("citationtitre eval6"); break;
+    case "citationtitreloinum": $(this).addClass("citationtitreloinum eval6"); break;
+    case "citationchaploi": $(this).addClass("citationchaploi eval6"); break;
+    case "citationsectloi": $(this).addClass("citationsectloi eval6"); break;
     case "considerant": $(this).addClass("considerant eval6"); break;
 
     case "numeroloiofficiel": $(this).addClass("numeroloiofficiel eval0"); break;
@@ -620,9 +726,6 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
            if($(this).prev().children("a").length==1){
              $(this).addClass("titretdm sansrenvoitdm");
            };
-
-//        $(this).addClass("titretdm sansrenvoitdm eval6");
-        
       };
       if(avanttdm==2){$(this).addClass("titretdm eval6");};
       break;
@@ -644,17 +747,14 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       $(this).prev().append(" "+$(this).text()); 
       $(this).remove();
       break;
-
       
     case "supsub":
       $(this).addClass("sup eval0");
       if ($(this).prev().hasClass("article")){ yligne= yligne-25; };    
       if(yligne > precyligne){
           $(this).prev().append("<sub>"+$(this).text()+"</sub>");
-//        $(this).addClass("sub eval5");
       }else{
           $(this).prev().append("<sup>"+$(this).text()+"</sup>");
-//        $(this).addClass("sup eval7");
       };
       $(this).remove();
       break;
@@ -665,10 +765,8 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         if ($(this).prev().hasClass("suiteparagraphe")){ yligne= yligne-10; };
         if(yligne > precyligne){
           $(this).prev().append("<sub>"+$(this).text()+"</sub>");
-//          $(this).addClass("sub eval0");
         }else{
           $(this).prev().append("<sup>"+$(this).text()+"</sup>");
-//          $(this).addClass("sup eval1");
         };
         $(this).remove();
       break;
@@ -739,11 +837,16 @@ $( "body div div" ).not("body div div div").each(function(index){
   $(this).prepend($(this).children(".enteteloi"));
 });
 
+
 // transforme les div en p et h
 $(".pagetdm div, .texteloi div").each(function(index){
   var saclass=""+$(this).attr("class") ;
-  var debut4 = saclass.indexOf("ws0") ;
-  if ( saclass ){  saclass = $(this).attr("class").substring(debut4+4);}; 
+  var debut4 = saclass.indexOf("ws") ;
+  if (saclass){ 
+    if(saclass[debut4 +3]==" "){debut4 = debut4 +4};
+    if(saclass[debut4 +4]==" "){debut4 = debut4 +5};
+    saclass = $(this).attr("class").substring(debut4);   
+  }; 
   var sonid= "";
   if ($(this).attr("id")){sonid = " id=\""+$(this).attr("id")+"\" ";}; 
   var debutwrap="<p"; var finwrap="></p>";
@@ -774,6 +877,13 @@ $(".pagetdm div, .texteloi div").each(function(index){
   $(this).contents().unwrap();
 });
 
+$(".pagetdm").each(function(index){
+  $(this).attr("class","pagetdm"); $(this).removeAttr("data-page-no");
+});
+$(".texteloi").each(function(index){
+  $(this).attr("class","texteloi"); $(this).removeAttr("data-page-no");
+});
+
 }; // fin function nettoyageloi
 
 function typecontenu(chainecontenu, classff, classgras, classitalique){
@@ -801,28 +911,38 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   var lesmots = contenu.split(" ");
   var mot1=lesmots[0]; var mot1b=mot1.substring(mot1.length - 1);
   var mot2=lesmots[1];
-  
-  if(contenu.indexOf("» : ")!=-1){return "definition";};
-  if((contenu[0]=="«")){
-    if(contenu.indexOf("»")!=-1){
-      return "definition";
-    }else{
-      if(isNaN(mot2) == true){
-        var remplacepoints2 = new RegExp('[\\.R]', 'g');
-        var mot2c = mot2;
-        mot2c = mot2c.replace(remplacepoints2, '');
-        if(isNaN(mot2c) != true){
-          if(mot2.substring(mot2.length -1)==="."){ 
-            return "citationarticle";
-          };
-        };
-        return "citation";
-      }else{
-        if(mot2.substring(mot2.length-1)=="."){return "citationarticle";};
-      };
-         
+  if(contenu==="« "){ return "citationavenir"; };
+  if(contenu[0]=="«"){
+    var fincite = contenu.indexOf("»");
+    var debutcite2 = contenu.indexOf("«",2);
+    var findef = contenu.indexOf("» : ");
+    var marquelron = contenu.indexOf("°");
+    var marquelpar = contenu.indexOf(")");
+    var marqueltir = contenu.indexOf("-");
+    var remplacepoints2 = new RegExp('[\\.R]', 'g');
+    var mot2c = mot2; mot2c = mot2c.replace(remplacepoints2, '');
+    if(findef>0){ 
+      if(marquelpar>0){if(marquelpar+1<debutcite2+1<findef){ return "citationlisteordonnee"; }; };
+      return "definition";   
+    }; //"» : "
+    if(fincite>0){ 
+      if(marquelpar>0){if(marquelpar+1<fincite+1){ return "citationlisteordonnee"; }; };
+      return "definition"; 
+     }; //"»"
+    if(isNaN(mot2c) != true){
+      if(mot2.substring(mot2.length -1)==="."){ return "citationarticle"; };
     };
+    if(mot2.substring(mot2.length -1)==="°"){ return "citationlistedegre"; };
+    if(mot2==="TITRE"){ return "citationtitreloinum"; };
+    if(mot2==="CHAPITRE"){ return "citationchaploi"; };
+    if(mot2==="SECTION"){ return "citationsectloi"; };
+    if(isNaN(mot2c) == true){
+      if(mot2==mot2.toUpperCase()){ return "citationtitre"; };
+    };
+      if(marquelpar>0){if(marquelpar+1==(mot2.length+2)){ return "citationlisteordonnee"; }; };
+      return "citation";
   };
+
   if(contenu.indexOf("»; ")!=-1){return "suiteparagraphe";};
   if(mot1=="TITRE"){return "titreloinum";};
   if(mot1=="CHAPITRE"){return "chaploi";};
@@ -1008,7 +1128,6 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   if(mot1=="-"){
     return "listetiret";
   }else{
-//    if(contenu.indexOf("LÉGISLATURE")!=-1){ return "legislature"; };
     return "suiteparagraphe";
   };
 };
@@ -1019,14 +1138,12 @@ function faitlelienhref(contenu){
   contenulien=contenulien.replace(remplacepoints2, '_');
   var remplacepoints3 = new RegExp('[ $]', 'g');
   contenulien=contenulien.replace(remplacepoints3, '');
-//  alert(contenulien);
   if(contenulien.substring(contenulien.length -1)=="_"){contenulien = contenulien.substring(0,contenulien.length -1);};
   if(contenulien.length>15){contenulien="";}
   return contenulien;
 };
 
 function decoupetableauminicipal(contenu){
-//  if (contenu==""){return contenu;};
   var contenutab="";
   var debut2=0;
   var decription="";
@@ -1082,6 +1199,7 @@ function effaceeval(){
   $(".eval5").removeClass("eval5");
   $(".eval6").removeClass("eval6");
   $(".eval7").removeClass("eval7");
+  $(".fondleger").removeClass("fondleger");
 };
 
 function nettoyagescript(){
