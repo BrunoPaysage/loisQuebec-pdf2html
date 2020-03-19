@@ -7,14 +7,16 @@ function chargefichier(){
       $("head").append($("style")); 
       $("head title").html(nomfichier);
       nettoyageloi(); $("head script[src=\"texteloi.js\"]").remove();
-//      effaceeval(); // mettre en remarque pour avoir la coloration
-      $("body").append("<script src=\"liensarticlesloi.js\"></script>"); $("body script").remove(); // mettre en remarque pour supprimer les liens dans les articles
-      nettoyagescript(); // mettre en remarque pour garder le jquery
-      // supprimepagination(); // mettre en remarque pour garder la structure paginée
+      effaceeval(); // mettre en remarque pour avoir la coloration
+      supprimepagination(); // mettre en remarque pour garder la structure paginée
+      compactetdm(); // mettre en remarque pour avoir la table des matières dans une balise details
+      $("body").append("<script src=\"liensarticlesloi.js\"></script>"); $("body script").remove()// mettre en remarque pour supprimer l'évaluation des articles
+      $("head").append("<script src=\"evaluation.js\"></script>"); $("body").append("<script>evaluation();</script>");// mettre en remarque pour supprimer les liens dans les articles
+//      nettoyagescript(); // mettre en remarque pour garder le jquery
+      
     }; 
     if(statusTxt == "error") { alert("erreur: "+xhr.status+" "+xhr.statusText); }; 
   });
-//  $("head title").after("\n<link rel=\"stylesheet\" href=\"../../../css/bgdvsite/bgdvsite.css\">")
   $("head title").after("\n<link rel=\"stylesheet\" href=\"texteloi.css\">")
  
 };
@@ -1209,7 +1211,21 @@ function nettoyagescript(){
 };
 
 function supprimepagination(){
-  $("body div").contents().unwrap();
-  $("body div").contents().unwrap();
+//  $("body div").contents().unwrap();
+//  $("body div").contents().unwrap();
+  $("body .pieddepageloi").remove();
+  $("body .enteteloi").remove();
 };
 
+function compactetdm(){
+  $(".tdm, .tdm ~").wrapAll("<div class=\"tdm1\"></div>");
+  $(".pagetdm p").not(".pagetdm:first-child p").wrapAll("<div class=\"tdm2\"></div>");
+  $(".tdm1").append($(".tdm2 p"));
+  $(".pagetdm").each(function(index){
+    if($(this).text()==""){$(this).remove()};
+  });
+  $(".tdm1").wrapAll("<details></details>");
+  $(".tdm").unwrap();
+  $(".tdm").wrap("<summary></summary>");
+  $(".tdm").contents().unwrap();
+};

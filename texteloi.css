@@ -57,6 +57,12 @@ p.suitebr { margin:0em; }
 .retrait, .retrait * {color:#500; text-decoration: line-through; }
 .ajout p.numpage { display:none;}
 
+/* coloration évaluation */
+div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
+div.jugemaffiche span.jugemaffiche {display:inline-block; width:auto; text-align:center;}
+div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
+div.jugemaffiche span.jugemaffiche {display:inline-block; width:auto; text-align:center;}
+.cache {display:none;}
 .eval0, .neval-2 { background: #fc2a1c; padding:3px;}
 .eval1, .neval-1 { background: #fd9226; padding:3px;}
 .eval2, .neval-0 { background: #fed631; padding:3px;}
@@ -65,6 +71,9 @@ p.suitebr { margin:0em; }
 .eval5, .neval2 { background: #25da29; padding:3px;}
 .eval6, .neval3 { background: #44ac45; padding:3px;}
 .eval7 { background: #880000; padding:3px;}
+td.eval0, td.eval1, td.eval2, td.eval3, td.eval4, td.eval5, td.eval6 { padding: 0px;}
+.nevaln { display:none; }
+
 .discret { color:#006;}
 .design, .design a {color: #B48B1D;}
 .vegetal, .vegetal a {color: #0D7610;}
