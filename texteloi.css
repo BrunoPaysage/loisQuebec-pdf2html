@@ -62,6 +62,7 @@ div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
 div.jugemaffiche span.jugemaffiche {display:inline-block; width:auto; text-align:center;}
 div.jugemaffiche span {display:inline-block; width:2em; text-align:center;}
 div.jugemaffiche span.jugemaffiche {display:inline-block; width:auto; text-align:center;}
+.tableenligne {display:inline-table; }
 .cache {display:none;}
 .eval0, .neval-2 { background: #fc2a1c; padding:3px;}
 .eval1, .neval-1 { background: #fd9226; padding:3px;}
