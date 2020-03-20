@@ -9,7 +9,7 @@ function chargefichier(){
       nettoyageloi(); $("head script[src=\"texteloi.js\"]").remove();
       effaceeval(); // mettre en remarque pour avoir la coloration
       supprimepagination(); // mettre en remarque pour garder la structure paginée
-      compactetdm(); // mettre en remarque pour avoir la table des matières dans une balise details
+      compactetdm(); // met la table des matières dans une balise details
       $("body").append("<script src=\"liensarticlesloi.js\"></script>"); $("body script").remove()// mettre en remarque pour supprimer l'évaluation des articles
       $("head").append("<script src=\"evaluation.js\"></script>"); $("body").append("<script>evaluation();</script>");// mettre en remarque pour supprimer les liens dans les articles
 //      nettoyagescript(); // mettre en remarque pour garder le jquery
@@ -44,7 +44,7 @@ if(premiereligne.substring(0,8)=="chapitre"){
 if(premiereligne=="1"){
   typetexte="pl44"; 
 //  classgras=""+$("#pf2 .pc2 div:nth-child(2)").attr("class").split(" ")[5];
-  $(".pc div:first-child").each(function(index){$(this).addClass("pageloipdf eval3")});
+  $(".pc div:first-child").each(function(index){$(this).addClass("pageloipdf pieddepageloi eval3")});
   $("#pf1 .pc1 div:nth-child(2)").addClass("legislature fondleger");
   classgras="ff3";
   classitalique="ff6";
@@ -1215,9 +1215,11 @@ function supprimepagination(){
 //  $("body div").contents().unwrap();
   $("body .pieddepageloi").remove();
   $("body .enteteloi").remove();
+//  $("body .pageloipdf").remove();
 };
 
 function compactetdm(){
+  if($(".tdm").text()==""){return;};
   $(".tdm, .tdm ~").wrapAll("<div class=\"tdm1\"></div>");
   $(".pagetdm p").not(".pagetdm:first-child p").wrapAll("<div class=\"tdm2\"></div>");
   $(".tdm1").append($(".tdm2 p"));
