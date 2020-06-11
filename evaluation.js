@@ -8,8 +8,8 @@ function evaluation(){
   nomfichier = nomfichier.split("/");
   if(nomfichier[nomfichier.length - 1]=="texteloiappel-test.html"){return;};
   // $("head").append("<script src=\""+nomfichierjs+"\"></script>"); 
-  $("div.texteloi p").not("p.refarticle, p.enteteloi, p.nonenvigueur").attr('id', function (index) { return "p" + index; });
-  $("div.texteloi p").not("p.refarticle, p.enteteloi, p.nonenvigueur, .jugem, p.pieddepageloi").after("<div class=\"jugem\"></div>");
+  $("div.texteloi p").not("p.refarticle, p.enteteloi, p.nonenvigueur, p.noneval").attr('id', function (index) { return "p" + index; });
+  $("div.texteloi p").not("p.refarticle, p.enteteloi, p.nonenvigueur, .jugem, p.pieddepageloi, p.noneval").after("<div class=\"jugem\"></div>");
   $( ".jugem" ).each(function( index ) {
     var indexarticle=$(this).prev().attr("id");
     var lecontenu = "<script>jugemquestion(\"jugemp"+indexarticle+"\",5);<\/script>"; 

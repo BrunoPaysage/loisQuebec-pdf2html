@@ -60,7 +60,7 @@ function faitlelien(lecontenu,ledebut){
   var longueurref=numarticle.length;
   var debutcontenu=contenu.substring(0,debut+8);
   var fincontenu=contenu.substring(debut+8+longueurref);
-  if("abcdefghijklmnopqrstuvwxyzéèà<".indexOf(numarticle[0])!=-1){
+  if("abcdefghijklmnopqrstuvwxyzéèà<(".indexOf(numarticle[0])!=-1){
     lien=numarticle; // rejet c'est un texte pas un numéro d'article
   }else{
     lien="<a href=\""+lien+"\" target=\"2\">"+numarticle+"</a>";
@@ -104,7 +104,7 @@ function faitlesliens(lecontenu,ledebut){
   var longueurref=numarticle.length;
   var debutcontenu=contenu.substring(0,debut+9);
   var fincontenu=contenu.substring(debut+9+longueurref);
-  if("abcdefghijklmnopqrstuvwxyzéèà<".indexOf(numarticle[0])!=-1){
+  if("abcdefghijklmnopqrstuvwxyzéèà<(".indexOf(numarticle[0])!=-1){
     lien=numarticle; // rejet c'est un texte pas un numéro d'article
   }else{
     lien="<a href=\""+lien+"\" target=\"2\">"+numarticle+"</a>";

@@ -1,7 +1,10 @@
+
 function chargefichier(){  
   var contenu= $("#nomfichier").val();
+  $("#avancement").html("Chargement de "+contenu+"");
+  $("#nomfichier").remove();
   var nomfichier=contenu.substring(12);nomfichier=nomfichier.substring(0,nomfichier.length-14);
-  $("body").load(contenu, 
+  $("#loi").load(contenu, 
   function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success") { 
       $("head").append($("style")); 
@@ -12,6 +15,7 @@ function chargefichier(){
       compactetdm(); // met la table des matières dans une balise details
       $("body").append("<script src=\"liensarticlesloi.js\"></script>"); $("body script").remove()// mettre en remarque pour supprimer l'évaluation des articles
       $("head").append("<script src=\"evaluation.js\"></script>"); $("body").append("<script>evaluation();</script>");// mettre en remarque pour supprimer les liens dans les articles
+      plmodifautre(); // pour identifier les supressions et les ajout des projets de loi
 //      nettoyagescript(); // mettre en remarque pour garder le jquery
       
     }; 
@@ -22,10 +26,10 @@ function chargefichier(){
 };
 
 function nettoyageloi(){
+
 // élimination des images et autres indésirables
 $("img, .l, .pi, .c, .d, ._, .loading-indicator").remove();
 $("#sidebar").remove();
-
 
 // identifie la loi
 var typetexte="";
@@ -144,7 +148,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         if(contenu.substr(0,1).toUpperCase()==contenu.substr(0,1)){ contenuchoix="paragraphe" ;};
       };
     };
-    
+
     if (contenuchoix=="paragraphe"){
       if($(this).is(".pc div:first-child")){
         var lesmotsprec= $(this).parent().parent().prev().children().children(".entete").prev().text().split(" ");
@@ -157,6 +161,8 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       if("|le|la|de|du|les|des|à|au|aux|et|(chapitre|c.|for|1er|".indexOf("|"+derniermot+"|")!=-1){
         contenuchoix="suiteparagraphe";
       };
+      if(contenu.indexOf("(chapitre")==0){ contenuchoix="suiteparagraphe"; };
+
       if(derniermot[derniermot.length-1]=="-"){contenuchoix="suiteparagraphe";};
       if(derniermot[derniermot.length-1]==","){contenuchoix="suiteparagraphe";};
       if(contenuchoix!="suiteparagraphe"){
@@ -166,6 +172,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           if($(this).prev().hasClass("renvoitdm")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("titre")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("titretdm")){ contenuchoix="paragraphe"; };
+          if($(this).prev().hasClass("listeordonnee")){ contenuchoix="paragraphe"; };
         };   
       };
       if((typetexte=="pl44")||(typetexte=="pl36")){ 
@@ -192,7 +199,9 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
         var lesmotsprec=$(this).prev().text().split(" "); 
       };
       var nbmotsprec=lesmotsprec.length;
-      var derniermot=lesmotsprec[nbmotsprec-1];if("|à|le|de|ou|au|aux|et|(chapitre|".indexOf("|"+derniermot+"|")!=-1){contenuchoix="suiteparagraphe";};
+      var derniermot=lesmotsprec[nbmotsprec-1];if("|à|le|de|ou|au|aux|et|(chapitre|".indexOf("|"+derniermot+"|")!=-1){
+//        if($(this).prev().hasClass("listeordonnee")){ contenuchoix="suiteparagraphe"; };
+      };
     }; 
     
     if (contenuchoix=="listeordonnee"){ 
@@ -300,8 +309,6 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
        };
     };
   };
-
-
 
   // Action en fonction du choix d'action
   switch (contenuchoix) {
@@ -879,12 +886,10 @@ $(".pagetdm div, .texteloi div").each(function(index){
   $(this).contents().unwrap();
 });
 
-$(".pagetdm").each(function(index){
-  $(this).attr("class","pagetdm"); $(this).removeAttr("data-page-no");
-});
-$(".texteloi").each(function(index){
-  $(this).attr("class","texteloi"); $(this).removeAttr("data-page-no");
-});
+$(".pagetdm").attr("class","pagetdm").removeAttr("data-page-no");
+$(".texteloi").attr("class","texteloi").removeAttr("data-page-no");
+$("#page-container div").not(".pagetdm,.texteloi").remove();
+dedoublei();
 
 }; // fin function nettoyageloi
 
@@ -1117,21 +1122,17 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   if(mot1==")]"){return "suiteparagraphe";};
   if(contenu[0]=="]"){return "suiteparagraphe";};
   if((mot1===")")&&(mot2==="-")){return "formule";};
-//  if(contenu=="] − G"){return "formule";};
   if(contenu=="[G"){return "formule";};
   if(premiercar=="("){
     if(contenu.indexOf(", c.")!=-1){return "suiteparagraphe";};
     if(derminusc != -1){return "suiteparagraphe";};
     return "paragraphe";
   }
-  if(premiercar=="o"){return "er";};
+  if(contenu=="os"){return "er";};
   if("IVX0".indexOf(premiercar)!=-1){return "suiteparagraphe";};
   if(contenu.substring(0,2)=="− "){ return "listetiret"; };
-  if(mot1=="-"){
-    return "listetiret";
-  }else{
-    return "suiteparagraphe";
-  };
+  if(mot1=="-"){ return "listetiret"; };
+  return "suiteparagraphe";
 };
 
 function faitlelienhref(contenu){
@@ -1215,7 +1216,6 @@ function supprimepagination(){
 //  $("body div").contents().unwrap();
   $("body .pieddepageloi").remove();
   $("body .enteteloi").remove();
-//  $("body .pageloipdf").remove();
 };
 
 function compactetdm(){
@@ -1231,3 +1231,84 @@ function compactetdm(){
   $(".tdm").wrap("<summary></summary>");
   $(".tdm").contents().unwrap();
 };
+
+function dedoublei(){
+  var remplaceii = new RegExp('(</i><i>)', 'g');
+  var remplaceii2 = new RegExp('( </i> <i>)', 'g');
+  var remplacebb = new RegExp('(</b><b>)', 'g');
+  var remplacebb2 = new RegExp('( </b> <b>)', 'g');
+  $("p").each(function(index){
+    if($("p").children("i").length>1){
+     var contenuhtml=$(this).html();
+     contenuhtml = contenuhtml.replace(remplaceii, '');
+     contenuhtml = contenuhtml.replace(remplaceii2, ' ');
+     $(this).html(contenuhtml);
+    };
+    if($("p").children("b").length>1){
+     var contenuhtml=$(this).html();
+     contenuhtml = contenuhtml.replace(remplacebb, '');
+     contenuhtml = contenuhtml.replace(remplacebb2, ' ');
+     $(this).html(contenuhtml);
+    };
+  });
+};
+
+function plmodifautre(){
+  var typetexte=$("#pf1 .numeroloiofficiel ").text();
+  if(typetexte.substring(0,13)!="Projet de loi"){return;};
+  var contenuarticle="";
+  var numeroarticle="";
+  var action="";
+  $(".texteloi .article").each(function(index){
+    contenuarticle=$(this).text();
+    numeroarticle=$(this).children(".numarticle:first-child").attr("id");
+    action="action";
+    if(contenuarticle.indexOf("modiﬁé")!=-1){action="modifie";};
+    if(contenuarticle.indexOf("insertion")!=-1){action="ajout";};
+    if(contenuarticle.indexOf("suppression")!=-1){action="retrait";};
+    if(contenuarticle.indexOf("remplacement")!=-1){action="retraitajout";};
+    if(contenuarticle.indexOf("remplacé")!=-1){action="remplace";};
+    switch (action) {
+      case "modifie":  
+        
+        break;
+      case "ajout":  
+        break;
+      case "retrait":  
+        break;
+      case "retraitajout":   
+        // var contenuhtml=$(this).html();
+        $(this).html(retraitajout($(this).html()));
+        // $(this).html(contenuhtml2);
+        break;
+      case "remplace":  
+        break;
+      default:  break;
+    };
+    
+  });
+  
+}
+
+function retraitajout(cetteligne){
+  var contenuhtml=cetteligne;
+          var debut=contenuhtml.indexOf("remplacement");
+        var debutretrait=contenuhtml.indexOf("de «",debut)+4;
+        var debutretrait2=contenuhtml.indexOf("de  «",debut)+5;
+        if(debutretrait==3){debutretrait=debutretrait2};
+        var finretrait=contenuhtml.indexOf("»",debut)
+        var avantretrait=contenuhtml.substring(0,debutretrait);
+        var retrait=contenuhtml.substring(debutretrait,finretrait);
+        var debutajout=contenuhtml.indexOf("par «",debut)+5;
+        var debutajout2=contenuhtml.indexOf("par  «",debut)+6;
+        if(debutajout==4){debutajout=debutajout2};
+        var finajout=contenuhtml.indexOf("»",debutajout);
+        if(contenuhtml.length-finajout>3){finajout=contenuhtml.indexOf("»",finajout+1);};
+        var ajout=contenuhtml.substring(debutajout,finajout);
+        var finphrase=contenuhtml.substring(finajout);
+//        alert(contenuhtml+"\n----\n"+avantretrait+"\n----\n"+retrait+"\n----\n"+"» par «"+"\n----\n"+ajout+"\n----\n"+finphrase);
+        var nomfichier=$("head title").text();
+        var idart=$(this).children(".numarticle").attr("id");
+        var contenuhtml2=avantretrait+"<span id=\""+nomfichier+idart+"retrait\" class=\"retrait\">"+retrait+"</span>"+"» par «"+"<span id=\""+nomfichier+idart+"ajout\" class=\"ajout\">"+ajout+"</span>"+finphrase;
+return contenuhtml2
+}
