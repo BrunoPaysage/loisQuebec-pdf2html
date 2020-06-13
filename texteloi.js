@@ -22,7 +22,6 @@ function chargefichier(){
     if(statusTxt == "error") { alert("erreur: "+xhr.status+" "+xhr.statusText); }; 
   });
   $("head title").after("\n<link rel=\"stylesheet\" href=\"texteloi.css\">")
- 
 };
 
 function nettoyageloi(){
@@ -491,6 +490,8 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "tdm":
       $(this).addClass("tdm eval1");
       premieritemloi=$(this).next().text();
+      premieritemloi2=$(this).next().children().text();
+      if(premieritemloi2=="undefined"){ premieritemloi= premieritemloi.substring(0,premieritemloi.indexOf(premieritemloi2));};
       if(premieritemloi.indexOf("....")>3){premieritemloi=premieritemloi.substring(0,premieritemloi.indexOf("...."));};
       avanttdm=0;
       break;

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8"> 
@@ -5,19 +6,24 @@
     <script src="jquery.js"></script> 
     <!-- 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="../../../css/texteloi.css">
     <script src="../../../scripts/jquery.js"></script> 
     -->
     <script src="texteloi.js"></script>
 </head>
 <body>
-  <input id="nomfichier" onchange="chargefichier(this.value)" value=""><br>
-  <a onClick='$("#nomfichier").val("preparation/A-6.001-meilleur.html");chargefichier(this.value);'>preparation/A-6.001-meilleur.html</a><br>
+<div id="avancement"></div>
+  <input id="nomfichier" onchange="chargefichier(this.value)" value="preparation/"><br>
+  <a onClick='$("#nomfichier").val("preparation/20-061f-meilleur.html");chargefichier();'>preparation/20-061f-meilleur.html</a><br>
+  <a onClick='$("#nomfichier").val("preparation/A-2.1-meilleur.html");chargefichier();'>preparation/A-2.1-meilleur.html</a><br>
+  <a onClick='$("#nomfichier").val("preparation/A-6.001-meilleur.html");chargefichier();'>preparation/A-6.001-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/A-33.02-meilleur.html");chargefichier(this.value);'>preparation/A-33.02-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/C-6.2-meilleur.html");chargefichier(this.value);'>preparation/C-6.2-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/M-25.2-meilleur.html");chargefichier(this.value);'>preparation/M-25.2-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/M-28-meilleur.html");chargefichier(this.value);'>preparation/M-28-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/M-30.001-meilleur.html");chargefichier(this.value);'>preparation/M-30.001-meilleur.html</a><br>
-  <a onClick='$("#nomfichier").val("preparation/Q-2-meilleur.html");chargefichier(this.value);'>preparation/Q-2-meilleur.html</a><br>
+  <a onClick='$("#nomfichier").val("preparation/P-40.1-meilleur.html");chargefichier(this.value);'>preparation/P-40.1-meilleur.html</a><br>
+ <a onClick='$("#nomfichier").val("preparation/Q-2-meilleur.html");chargefichier(this.value);'>preparation/Q-2-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/R-2.2.0.1_1-meilleur.html");chargefichier(this.value);'>preparation/R-2.2.0.1_1-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/R-6.01-meilleur.html");chargefichier(this.value);'>preparation/R-6.01-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/T-0.1_-R.-2-meilleur.html");chargefichier(this.value);'>preparation/T-0.1_-R.-2-meilleur.html</a><br>
@@ -25,6 +31,6 @@
   <a onClick='$("#nomfichier").val("preparation/pl2019-044f-meilleur.html");chargefichier(this.value);'>preparation/pl2019-044f-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/pl2019-036f-meilleur.html");chargefichier(this.value);'>preparation/pl2019-036f-meilleur.html</a><br>
   <a onClick='$("#nomfichier").val("preparation/pl2019-197f-meilleur.html");chargefichier(this.value);'>preparation/pl2019-197f-meilleur.html</a><br>
-    
+<div id="loi"></div>
 </body>
 </html>

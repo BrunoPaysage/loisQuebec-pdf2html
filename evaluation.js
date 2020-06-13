@@ -1,6 +1,7 @@
 var nomdomaine="designvegetal.com";
 var cheminphploin="//www.designvegetal.com/scripts/jugem/jugem.php";
 var serveurlocal="lhost"; // =hosttemp.substring(hosttemp.length - 5, hosttemp.length)
+//var serveurlocal=hosttemp.substring(hosttemp.length - 5, hosttemp.length);
 var cheminphplocal="/www.designvegetal.com/scripts/jugem/jugem.php"
 
 function evaluation(){
@@ -15,6 +16,16 @@ function evaluation(){
     var lecontenu = "<script>jugemquestion(\"jugemp"+indexarticle+"\",5);<\/script>"; 
     $( this ).attr('id', "jugemp"+indexarticle);
     $( this ).html(lecontenu );
+    
+    var lechemin=location.href;
+    lechemin= lechemin.substring(0,lechemin.indexOf(".html"));
+    var nomfichier=lechemin.substring(lechemin.lastIndexOf("/")+1);
+    var fictif=lechemin+"/"+nomfichier+"-jugemp"+indexarticle+".txt";
+//    if(indexarticle=="p0"){alert(fictif)};
+    $( this ).prepend("<div id='jugemt"+indexarticle+"' class='vivre'></div>" );
+    var lecontenu=$("#jugemt"+indexarticle).load(fictif);
+    $( "#jugemt"+indexarticle ).html(lecontenu );
+    
   });
 };
 
@@ -97,17 +108,18 @@ function jugemenvoi(envoivaleur){
   if (nbcases==""){nbcases=7};
   
   var cheminphp="";
-  var hosttemp = location.hostname;
-  
+//  var hosttemp = location.hostname;
   if (location.hostname=="www."+nomdomaine){cheminphp=cheminphploin};
-  
-  var hostnamelocal = hosttemp.substring(hosttemp.length - 5, hosttemp.length);
-  if (hostnamelocal==serveurlocal){cheminphp=location.origin+cheminphplocal};
+
+  if(location.host.length!=0){ cheminphp=location.origin+cheminphplocal }; // serveur local
   if (cheminphp!=""){ 
-    $(mondiv2).load( cheminphp, envoivaleur , function(responseTxt, statusTxt, xhr){if(statusTxt == "success") { $(mondiv2).html(responseTxt); jugemresultat(mondiv, chemin, choix, nbcases); 
-    var envoiou="div#" + mondiv.substring(0,(mondiv.lastIndexOf("_"))) +">div";
-    if(envoiou != "div#>div"){tinysort(envoiou,'span');};
-    }} );
+    $(mondiv2).load( cheminphp, envoivaleur , function(responseTxt, statusTxt, xhr){
+      if(statusTxt == "success") { 
+        $(mondiv2).html(responseTxt); jugemresultat(mondiv, chemin, choix, nbcases); 
+        var envoiou="div#" + mondiv.substring(0,(mondiv.lastIndexOf("_"))) +">div";
+        if(envoiou != "div#>div"){tinysort(envoiou,'span');};
+      };
+    });
   }else{
     // trace la barre à partir du fichier disque dur si on est en local
     var chemin= envoivaleur.substring(0,(envoivaleur.lastIndexOf("&"))+0);
