@@ -1,11 +1,10 @@
- 
 .numeroloiofficiel {font-size:10.5pt; line-height:1.3em;  margin-top:2em;} 
 .titreloiofficiel {font-size:11pt; line-height:1.3em;  font-weight:bold;  } 
 .titreavanttdm {font-size:11pt; line-height:1.3em;   margin-top:1em;} 
 
 .tdm {font-size:11pt; line-height:1.3em; font-weight:bold;  margin-top:2em;} 
-.grandtitretdm, .chapitretdm, .sectiontdm, .soussectiontdm, .soussoussectiontdm, .annexetdm, .titrespecialtdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em; margin-bottom:0em;} 
-.titretdm, .textegrandtitretdm, .textechapitretdm, .textesectiontdm, .textesoussectiontdm, .textesoussoussectiontdm, .texteannexetdm { margin:0em; font-size:10pt; line-height:1em; }
+.livretdm, .grandtitretdm, .chapitretdm, .sectiontdm, .soussectiontdm, .soussoussectiontdm, .annexetdm, .titrespecialtdm {font-size:10.5pt; line-height:1.3em;  margin-top:0.5em; margin-bottom:0em;} 
+.textelivretdm, .titretdm, .textegrandtitretdm, .textechapitretdm, .textesectiontdm, .textesoussectiontdm, .textesoussoussectiontdm, .texteannexetdm { margin:0em; font-size:10pt; line-height:1em; }
 .renvoitdm, .sansrenvoitdm { } 
 .renvoitdm b.numarticle {float:right; margin:0em; } 
 
@@ -16,6 +15,9 @@
 .pieddepageloi {font-size:9pt; line-height:1.3em; color:#ddd;  margin-top:1em;} 
 .pieddepageloi  {float:left;} 
 .pieddepageloi +.pieddepageloi {float:right; padding-top:-0.5em;} 
+
+.livreloinum {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#ddf; margin-top:2em; }
+.titrelivreloi {font-size:11pt; line-height:1.3em;  font-weight: normal; margin-top:0em;  background-color:#ddf; text-align:left;  margin-top:-1em;}
 
 .titreloinum, .grandtitreloi {font-size:11pt; line-height:1.3em; font-weight: bold;  background-color:#dbf; margin-top:2em; }
 .titreloitexte, .textegrandtitreloi {font-size:11pt; line-height:1.3em;  font-weight: normal; margin-top:0em;  background-color:#dbf; text-align:left;  margin-top:-1em;}
@@ -85,3 +87,6 @@ td.eval0, td.eval1, td.eval2, td.eval3, td.eval4, td.eval5, td.eval6 { padding: 
 .fondleger  {background-color:#cce; } 
 .fondmoyen   {background-color:#98f; } 
 .fondfort   {background-color:#78f; } 
+
+div.jugem {margin-top:-12px;} 
+div.petitebarre {margin-top:-22px;}

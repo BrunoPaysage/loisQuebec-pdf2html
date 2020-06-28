@@ -21,12 +21,31 @@ function evaluation(){
     lechemin= lechemin.substring(0,lechemin.indexOf(".html"));
     var nomfichier=lechemin.substring(lechemin.lastIndexOf("/")+1);
     var fictif=lechemin+"/"+nomfichier+"-jugemp"+indexarticle+".txt";
-//    if(indexarticle=="p0"){alert(fictif)};
-    $( this ).prepend("<div id='jugemt"+indexarticle+"' class='vivre'></div>" );
-    var lecontenu=$("#jugemt"+indexarticle).load(fictif);
-    $( "#jugemt"+indexarticle ).html(lecontenu );
-    
+    $( this ).prepend("<div id='jugemt"+indexarticle+"' class='petitebarre'></div>" );
+    var lecontenu=$("#jugemt"+indexarticle).load(fictif, function(responseTxt, statusTxt, xhr){
+        if(statusTxt == "success") { var lapetite=petitebarre(lecontenu.text()); $( "#jugemt"+indexarticle ).html(lapetite); };
+        if(statusTxt == "error") {  $( "#jugemt"+indexarticle ).remove(); };
+        });
+//    $( "#jugemt"+indexarticle ).html(lecontenu );
+   
   });
+};
+
+function petitebarre(lecontenu){
+  var eval0 = lecontenu.split("||");
+  var chaine1="<table width=\'107px\' class=\'tableenligne\'><tbody><tr>";
+  var totaleval=0; //total des donnees
+  for (var iter = 0; iter < 7; iter++) { totaleval += Number(eval0[iter]); };
+  var votepourcent = [0,0,0,0,0,0,0]; //mise en proportion % des donnees
+  for (var iter = 0; iter < 7; iter++) {
+    if(iter==2){iter++};
+    if(iter==4){iter++};
+    votepourcent[iter] = eval0[iter]/totaleval ; 
+    votepourcent[iter] = Math.round(100*votepourcent[iter],8); 
+    chaine1+="<td class=\"eval"+iter+"\" width=\'"+votepourcent[iter]+"%\' height=\'4px\'></td>";
+  };
+  chaine1+="</tr></tbody></table>";
+  return chaine1;
 };
 
 function jugemquestion(mondiv, nbcases, choix){
@@ -111,7 +130,7 @@ function jugemenvoi(envoivaleur){
 //  var hosttemp = location.hostname;
   if (location.hostname=="www."+nomdomaine){cheminphp=cheminphploin};
 
-  if(location.host.length!=0){ cheminphp=location.origin+cheminphplocal }; // serveur local
+//  if(location.host.length!=0){ cheminphp=location.origin+cheminphplocal }; // serveur local
   if (cheminphp!=""){ 
     $(mondiv2).load( cheminphp, envoivaleur , function(responseTxt, statusTxt, xhr){
       if(statusTxt == "success") { 

@@ -58,8 +58,13 @@ if(premiereligne.indexOf("LÉGISLATURE")!=-1){
   $("#pf1 .pc1 div:nth-child(1)").addClass("legislature fondleger");
   classgras="ff3";
   classitalique="ff8";
+  var contenu=$("#pf3 .pc3 div:first").text();
+  if(contenu=="3"){
+    $(".pc div:first-child").each(function(index){
+      if(isNaN($(this).text()) != true){ $(this).addClass("pageloipdf pieddepageloi eval3"); };
+    });
+  };
 };
-
 
 var idpage="";
 var premieritemloi="";
@@ -143,8 +148,9 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
 
     // modification du choix d'action en fonction du contexte
     if (contenuchoix=="suiteparagraphe"){ 
-      if(ecartligne>14){
+       if(ecartligne>14){
         if(contenu.substr(0,1).toUpperCase()==contenu.substr(0,1)){ contenuchoix="paragraphe" ;};
+        if(contenu.toUpperCase()==contenu){ contenuchoix="titre" ;};
       };
     };
 
@@ -172,7 +178,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
           if($(this).prev().hasClass("titre")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("titretdm")){ contenuchoix="paragraphe"; };
           if($(this).prev().hasClass("listeordonnee")){ contenuchoix="paragraphe"; };
-        };   
+        };  
       };
       if((typetexte=="pl44")||(typetexte=="pl36")){ 
         var remplacefi = new RegExp('[]', 'g');
@@ -220,6 +226,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       };
       if(avanttdm==2){
         if($(this).prev().hasClass("titreloinum")){ contenuchoix="titreloitexte"; };
+        if($(this).prev().hasClass("livreloinum")){ contenuchoix="titrelivreloi"; };
         if($(this).prev().hasClass("chaploi")){ contenuchoix="titrechapitreloi"; };
         if($(this).prev().hasClass("sectloi")){ contenuchoix="titresectloi"; };
         if($(this).prev().hasClass("annexeloi")){ contenuchoix="titreannexeloi"; };
@@ -587,6 +594,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       var contenulien="art"+faitlelienhref($(this).text());
       $(this).prev().html("<span class=\"titretdm\">"+contenu5+"</span> <b class=\"numarticle\">"+contenu+"</b>");
       if(contenulien!="art"){ $(this).prev().contents().wrapAll("<a href=\"#"+contenulien+"\"></a>"); };
+      if($(this).prev().prev().hasClass("livretdm")){ $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textelivretdm renvoitdm eval8"); };
       if($(this).prev().prev().hasClass("grandtitretdm")){ $(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textegrandtitretdm renvoitdm eval7"); };
       if($(this).prev().prev().hasClass("chapitretdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textechapitretdm renvoitdm eval6"); };
       if($(this).prev().prev().hasClass("sectiontdm")){$(this).prev().removeClass("sansrenvoitdm renvoitdm eval3").addClass("titretdm textesectiontdm renvoitdm eval5");};
@@ -660,6 +668,7 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
       $(this).html("« <i class=\"citeliste\">"+debut+"</i>"+contenu3.join(" "));
       break;
     case "citationdefinition": $(this).addClass("citationdefinition eval6"); break;
+    case "citationlivre": $(this).addClass("citationlivre eval6"); break;
     case "citationtitre": $(this).addClass("citationtitre eval6"); break;
     case "citationtitreloinum": $(this).addClass("citationtitreloinum eval6"); break;
     case "citationchaploi": $(this).addClass("citationchaploi eval6"); break;
@@ -669,6 +678,13 @@ $(".pc div").not("#pf1 .numeroloiofficiel, #pf1 .titreloiofficiel, .pageloipdf")
     case "numeroloiofficiel": $(this).addClass("numeroloiofficiel eval0"); break;
     case "titreloiofficiel": $(this).addClass("titreloiofficiel fondleger"); break;
     
+    case "livreloinum": 
+      if(avanttdm==1){$(this).addClass("livreloinum");};
+      if(avanttdm==0){$(this).addClass("livretdm sansrenvoitdm eval8");};
+      if(avanttdm==2){$(this).addClass("livreloinum");};       
+      break;
+    case "titrelivreloi": $(this).addClass("titrelivreloi eval8"); break;
+        
     case "titreloinum": 
       if(avanttdm==1){$(this).addClass("titreloinum");};
       if(avanttdm==0){$(this).addClass("grandtitretdm sansrenvoitdm eval7");};
@@ -847,7 +863,6 @@ $( "body div div" ).not("body div div div").each(function(index){
   $(this).prepend($(this).children(".enteteloi"));
 });
 
-
 // transforme les div en p et h
 $(".pagetdm div, .texteloi div").each(function(index){
   var saclass=""+$(this).attr("class") ;
@@ -864,6 +879,8 @@ $(".pagetdm div, .texteloi div").each(function(index){
   if(saclass.indexOf("titreloiofficiel")!=-1){ balise="titreh1"; };
   if(saclass.indexOf("grandtitreloi")!=-1){ balise="titreh1"; };
   if(saclass.indexOf("textegrandtitreloi")!=-1){ balise="titreh1"; };
+  if(saclass.indexOf("livreloinum")!=-1){ balise="titreh2"; };
+  if(saclass.indexOf("titrelivreloi")!=-1){ balise="titreh2"; };
   if(saclass.indexOf("chaploi")!=-1){ balise="titreh2"; };
   if(saclass.indexOf("titrechapitreloi")!=-1){ balise="titreh2"; };
   if(saclass.indexOf("titreavanttdm")!=-1){ balise="titreh3"; };
@@ -891,6 +908,15 @@ $(".pagetdm").attr("class","pagetdm").removeAttr("data-page-no");
 $(".texteloi").attr("class","texteloi").removeAttr("data-page-no");
 $("#page-container div").not(".pagetdm,.texteloi").remove();
 dedoublei();
+
+// supprimer les espaces doubles
+  var remplace2espaces = new RegExp('(  )', 'g');
+  $("p").each(function(index){
+    var contenuhtml=$(this).html();
+    contenuhtml = contenuhtml.replace(remplace2espaces, ' ');   
+    $(this).html(contenuhtml);
+  });
+
 
 }; // fin function nettoyageloi
 
@@ -944,6 +970,7 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
     if(mot2==="TITRE"){ return "citationtitreloinum"; };
     if(mot2==="CHAPITRE"){ return "citationchaploi"; };
     if(mot2==="SECTION"){ return "citationsectloi"; };
+    if(mot2==="LIVRE"){ return "citationlivre"; };
     if(isNaN(mot2c) == true){
       if(mot2==mot2.toUpperCase()){ return "citationtitre"; };
     };
@@ -952,10 +979,11 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   };
 
   if(contenu.indexOf("»; ")!=-1){return "suiteparagraphe";};
+  if(mot1=="LIVRE"){return "livreloinum";};
   if(mot1=="TITRE"){return "titreloinum";};
   if(mot1=="CHAPITRE"){return "chaploi";};
   if(mot1=="SECTION"){return "sectloi";};
-  if(mot1=="§"){return "soussection";};
+  if(mot1[0]=="§"){return "soussection";};
   if(mot1=="CONSIDÉRANT"){return "considerant";};
   if(mot1=="DISPOSITIONS"){return "titre";};
   if(mot1=="(chapitre"){return "suiteparagraphe";};
@@ -984,6 +1012,7 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
     if(contenu.indexOf("—",3)!=-1){return "suiteparagraphe";}else{return "listetiret";};
   };
   if(contenu.indexOf(". —")!=-1){return "soussection";};
+  if(contenu.indexOf(". —")!=-1){return "soussection";};
   if(mot1.substring(mot1.length - 1)==","){ 
     if(contenu.indexOf("le")==-1){
       if(contenu.indexOf("en")==-1){
@@ -1053,6 +1082,9 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
   if((mot1==="LE")&&(graisse=="ff1")){return "titre";};
   if((mot1==="LA")&&(graisse=="ff1")){return "titre";};
   if((mot1==="ET")&&(graisse=="ff1")){return "titre";};
+  if((mot1==="DE")&&(graisse=="ff1")){return "titre";};
+  if((mot1==="DES")&&(graisse=="ff1")){return "titre";};
+  if((mot1==="DU")&&(graisse=="ff1")){return "titre";};
 
   if(premajusc!=-1){
     if(derminusc!=-1){ return "paragraphe"; };
