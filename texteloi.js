@@ -954,7 +954,8 @@ function typecontenu(chainecontenu, classff, classgras, classitalique){
     var marquelpar = contenu.indexOf(")");
     var marqueltir = contenu.indexOf("-");
     var remplacepoints2 = new RegExp('[\\.R]', 'g');
-    var mot2c = mot2; mot2c = mot2c.replace(remplacepoints2, '');
+    var mot2c = mot2; 
+if(mot2){    mot2c = mot2c.replace(remplacepoints2, ''); }else{mot2="---"};
     if(findef>0){ 
       if(marquelpar>0){if(marquelpar+1<debutcite2+1<findef){ return "citationlisteordonnee"; }; };
       return "definition";   
@@ -1311,7 +1312,7 @@ function plmodifautre(){
         break;
       case "retraitajout":   
         // var contenuhtml=$(this).html();
-        $(this).html(retraitajout($(this).html()));
+     //   $(this).html(retraitajout($(this).html()));
         // $(this).html(contenuhtml2);
         break;
       case "remplace":  
